@@ -1,12 +1,10 @@
 # function to compute distance in miles between user specified location and each park
 calcDistance <- function(address) {
-  query <- str_c("https://api.openrouteservice.org/geocode/search?api_key=5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa&text=",
-               address)
-  query <- URLencode(query)
+  x <- ors_geocode(address, boundary.country = "US")
   
   # user inputted location coordinates
-  input_long <- fromJSON(query)$bbox[1]
-  input_lat <- fromJSON(query)$bbox[2]
+  input_long <- x$bbox[1]
+  input_lat <- x$bbox[2]
   
   parkfinal <- readRDS("data/parkfeatures.rds")
   parkfinal <- parkfinal %>% 
@@ -27,7 +25,7 @@ get_parkrec <- function(parkdata, maxdistance, activities, fee, season) {
     select(-c(longitude, latitude, distance))
   parkdata$parkname <- factor(parkdata$parkname)
   
-  rf.mod <- randomForest(parkname~., data = parkdata, mtry = 6, importance = TRUE)
+  rf.mod <- randomForest(parkname~., data = parkdata)
   
   act_names <- c("Astronomy", "Stargazing", "Biking", "Boating", 
                      "Camping", "Climbing", "Fishing", "Hiking", "Paddling",
