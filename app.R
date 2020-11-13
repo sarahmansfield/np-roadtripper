@@ -1,22 +1,26 @@
 # packages
 library(devtools)
-devtools::install_github("nik01010/dashboardthemes")
+# devtools::install_github("nik01010/dashboardthemes")
 library(dashboardthemes)
 library(shinydashboard)
+library(tidyverse)
+library(jsonlite)
+library(geosphere)
+library(randomForest)
 
 # load api helper functions
-#source("api_wrappers.R")
+source("parkinfo.R")
 
 # user interface
 ui <- fluidPage(
   dashboardPage(
     dashboardHeader(title = "NP Roadtripper"),
     dashboardSidebar(
-      sidebarMenu(
+      sidebarMenu(id = "sidebar",
         menuItem("User Guide", tabName = "userguide", 
                  icon = icon("book-open")),
         menuItem("Find a Park", tabName = "findpark", 
-                 icon = icon("tree")),
+                 icon = icon("tree")), 
         menuItem("Plan Your Trip", tabName = "directions", 
                  icon = icon("map-marked-alt")),
         menuItem("Roadtrip Playlist", tabName = "playlist", 
@@ -29,7 +33,7 @@ ui <- fluidPage(
     ),
     dashboardBody(
       ### apply theme
-      shinyDashboardThemes(theme = "purple_gradient"),
+      shinyDashboardThemes(theme = "blue_gradient"),
       tabItems(
         # user guide tab
         tabItem(tabName = "userguide",
@@ -50,12 +54,50 @@ ui <- fluidPage(
                          )
                   )
                 ),
+        
         # find a park tab
-        tabItem(tabName = "findpark"),
+        tabItem(tabName = "findpark",
+                fluidRow(width = 12, align = "center",
+                         valueBox("Not sure which national park to visit first? Let us make a recommendation!", 
+                        "We'll try to match you to a park that best suits your interests, even if it doesn't exactly match all of your preferences", 
+                        icon = icon("leaf"), color = "blue", width = 12)
+                        ),
+                box(width = 3, status = "primary",
+                    textInput(inputId = "startloc",
+                              label = "Starting from:",
+                              placeholder = "e.g. 1234 Duke Drive, Durham NC"),
+                    numericInput(inputId = "distance",
+                                 label = "Maximum Travel Distance (mi):",
+                                 value = 10,
+                                 min = 0,
+                                 max = 3700),
+                    selectInput(inputId = "season",
+                                label = "Travel Season:",
+                                choices = c("Spring", "Summer", "Fall", "Winter")),
+                    selectInput(inputId = "activities",
+                                label = "Activities:",
+                                choices = c("Astronomy", "Stargazing", "Biking", "Boating", 
+                                            "Camping", "Climbing", "Fishing", "Hiking", "Paddling",
+                                            "Canoeing", "Kayaking", "Skiing", "Swimming", "Scenic Driving"),
+                                multiple = TRUE), # returns a character vector
+                    checkboxInput(inputId = "fee",
+                                  label = "Free (no entrance fee)"),
+                    div(align = "right",
+                        actionButton(inputId = "getrec", 
+                                 label = strong("Find a Match"), 
+                                 icon = icon("pagelines"))
+                        )
+                    ),
+                # output park rec
+                uiOutput("parkBox")
+                ),
+        
         # directions tab
         tabItem(tabName = "directions"),
+        
         # playlist tab
         tabItem(tabName = "playlist"),
+        
         # articles tab
         tabItem(tabName = "articles")
         )
@@ -65,7 +107,26 @@ ui <- fluidPage(
 
 # server function
 server <- function(input, output) {
-
+  # get park recommendation
+  recData <- eventReactive(input$getrec, {
+    parkfinal <- calcDistance(input$startloc)
+    get_parkrec(parkdata = parkfinal, maxdistance = input$distance, activities = input$activities,
+                fee = as.numeric(input$fee), season = input$season)
+  })
+  # output park rec
+  output$parkBox <- renderUI({
+    park_name <- recData() %>%
+      select(parkname) %>%
+      pull()
+    location <- recData() %>%
+      select(state) %>%
+      pull()
+    infoBox("Our Recommendation", 
+            park_name, 
+            str_c("Location(s): ", location),
+            icon = icon("map-pin"), color = "blue", width = 9
+            )
+    })
 }
 
 # run the application 
