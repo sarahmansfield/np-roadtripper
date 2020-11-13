@@ -1,5 +1,6 @@
-# packages
 library(devtools)
+library(remotes)
+# remotes::install_github("GIScience/openrouteservice-r")
 # devtools::install_github("nik01010/dashboardthemes")
 library(dashboardthemes)
 library(shinydashboard)
@@ -7,9 +8,15 @@ library(tidyverse)
 library(jsonlite)
 library(geosphere)
 library(randomForest)
+library(leaflet)
+library(rgdal)
+library(httr)
+library(openrouteservice)
+ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key for openroute service api
 
 # load api helper functions
 source("parkinfo.R")
+source("mapdirections.R")
 
 # user interface
 ui <- fluidPage(
@@ -60,7 +67,7 @@ ui <- fluidPage(
                 fluidRow(width = 12, align = "center",
                          valueBox("Not sure which national park to visit first? Let us make a recommendation!", 
                         "We'll try to match you to a park that best suits your interests, even if it doesn't exactly match all of your preferences", 
-                        icon = icon("leaf"), color = "blue", width = 12)
+                        icon = icon("tree"), color = "blue", width = 12)
                         ),
                 box(width = 3, status = "primary",
                     textInput(inputId = "startloc",
@@ -68,9 +75,9 @@ ui <- fluidPage(
                               placeholder = "e.g. 1234 Duke Drive, Durham NC"),
                     numericInput(inputId = "distance",
                                  label = "Maximum Travel Distance (mi):",
-                                 value = 10,
+                                 value = 500,
                                  min = 0,
-                                 max = 3700),
+                                 max = 3000),
                     selectInput(inputId = "season",
                                 label = "Travel Season:",
                                 choices = c("Spring", "Summer", "Fall", "Winter")),
@@ -88,12 +95,43 @@ ui <- fluidPage(
                                  icon = icon("pagelines"))
                         )
                     ),
-                # output park rec
-                uiOutput("parkBox")
+                # output park rec banner
+                uiOutput("parkBox"),
+                # tab box w/info about recommended park
+                uiOutput("parkinfobox")
                 ),
         
         # directions tab
-        tabItem(tabName = "directions"),
+        tabItem(tabName = "directions",
+                box(width = 3, status = "primary",
+                    textInput(inputId = "startlocmap",
+                              label = "Starting from:",
+                              placeholder = "e.g. 1234 Duke Drive, Durham NC"),
+                    selectInput(inputId = "parkdest",
+                                label = "Destination:",
+                                choices = c("Acadia National Park", "Arches National Park", "Badlands National Park", "Big Bend National Park",
+                                            "Biscayne National Park", "Black Canyon Of The Gunnison National Park", "Bryce Canyon National Park", 
+                                            "Canyonlands National Park", "Capitol Reef National Park", "Carlsbad Caverns National Park",
+                                            "Channel Islands National Park", "Congaree National Park", "Crater Lake National Park", 
+                                            "Cuyahoga Valley National Park", "Death Valley National Park", "Everglades National Park",
+                                            "Gateway Arch National Park", "Glacier National Park", "Grand Canyon National Park", "Grand Teton National Park",
+                                            "Great Basin National Park", "Great Smoky Mountains National Park", "Guadalupe Mountains National Park",
+                                            "Haleakala National Park", "Hawai'i Volcanoes National Park", "Hot Springs National Park",
+                                            "Indiana Dunes National Park", "Isle Royale National Park", "Joshua Tree National Park", "Kenai Fjords National Park",
+                                            "Kobuk Valley National Park", "Lassen Volcanic National Park", "Mammoth Cave National Park", "Mesa Verde National Park",
+                                            "Mount Rainier National Park", "North Cascades National Park", "Olympic National Park", "Petrified Forest National Park",
+                                            "Pinnacles National Park", "Rocky Mountain National Park", "Saguaro National Park", "Shenandoah National Park",
+                                            "Theodore Roosevelt National Park", "Voyageurs National Park", "White Sands National Park", "Wind Cave National Park",
+                                            "Yellowstone National Park", "Yosemite National Park", "Zion National Park")),
+                    div(align = "right",
+                        actionButton(inputId = "getdirections", 
+                                     label = strong("Get Directions"), 
+                                     icon = icon("compass"))
+                        )
+                    ),
+                # output map
+                leafletOutput("map")
+                ),
         
         # playlist tab
         tabItem(tabName = "playlist"),
@@ -127,6 +165,25 @@ server <- function(input, output) {
             icon = icon("map-pin"), color = "blue", width = 9
             )
     })
+  # output info about recommended park in tabBox
+  output$parkinfobox <- renderUI({
+    tabBox(
+      title = tagList(shiny::icon("info-circle"), "Info"),
+      # The id lets us use input$tabset1 on the server to find the current tab
+      id = "tabset1", width = 9, side = "right",
+      tabPanel("Hours"),
+      tabPanel("Weather"),
+      tabPanel("General Info")
+    )
+  })
+  
+  # directions map
+  leafletmap <- eventReactive(input$getdirections, {
+    get_route(startpoint = input$startlocmap, park = input$parkdest)
+  })
+  output$map <- renderLeaflet({
+    leafletmap()
+  })
 }
 
 # run the application 
