@@ -1,10 +1,7 @@
-library(devtools)
-library(remotes)
-remotes::install_github("GIScience/openrouteservice-r")
-devtools::install_github("nik01010/dashboardthemes")
-library(dashboardthemes)
 library(shinydashboard)
+library(dashboardthemes)
 library(shinyBS)
+library(shinyWidgets)
 library(tidyverse)
 library(purrr)
 library(jsonlite)
@@ -13,6 +10,8 @@ library(magick)
 library(geosphere)
 library(randomForest)
 library(leaflet)
+library(remotes)
+remotes::install_github("GIScience/openrouteservice-r")
 library(openrouteservice)
 ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key for openroute service api
 
@@ -22,6 +21,19 @@ source("mapdirections.R")
 
 # user interface
 ui <- fluidPage(
+  # change header font
+  tags$head(
+    tags$style(HTML("
+      @import url('//fonts.googleapis.com/css?family=Lobster|Cabin:400,700');
+      
+      .main-header .logo {
+      font-family: 'Lobster', cursive;
+      font-weight: bold;
+      font-size: 24px;
+      }
+      
+    "))
+  ),
   # directions pop up window
   bsModal(id = "directModal", 
           title = "Directions", 
@@ -74,45 +86,55 @@ ui <- fluidPage(
         # find a park tab
         tabItem(tabName = "findpark",
                 fluidRow(width = 12, align = "center",
-                         valueBox("Not sure which national park to visit first? Let us make a recommendation!", 
-                        "We'll try to match you to a park that best suits your interests, even if it doesn't exactly match all of your preferences", 
-                        icon = icon("tree"), color = "blue", width = 12)
+                         valueBox("Not sure which national park to visit first?", 
+                        "Let us make a recommendation! We'll try to match you to a park you might like, even if it doesn't exactly match all of your preferences", 
+                        icon = icon("tree"), color = "teal", width = 12)
                         ),
-                box(width = 3, status = "primary",
-                    textInput(inputId = "startloc",
-                              label = "Starting from:",
-                              placeholder = "e.g. 1234 Duke Drive, Durham NC"),
-                    numericInput(inputId = "distance",
-                                 label = "Maximum Travel Distance (mi):",
-                                 value = 500,
-                                 min = 0,
-                                 max = 3000),
-                    selectInput(inputId = "season",
-                                label = "Travel Season:",
-                                choices = c("Spring", "Summer", "Fall", "Winter")),
-                    selectInput(inputId = "activities",
-                                label = "Activities:",
-                                choices = c("Astronomy", "Stargazing", "Biking", "Boating", 
-                                            "Camping", "Climbing", "Fishing", "Hiking", "Paddling",
-                                            "Canoeing", "Kayaking", "Skiing", "Swimming", "Scenic Driving"),
-                                multiple = TRUE), # returns a character vector
-                    checkboxInput(inputId = "fee",
-                                  label = "Free (no entrance fee)"),
-                    div(align = "right",
-                        actionButton(inputId = "getrec", 
-                                 label = strong("Find a Match"), 
-                                 icon = icon("pagelines"))
-                        )
-                    ),
-                # output park rec banner
-                uiOutput("parkBox"),
-                # tab box w/info about recommended park
-                uiOutput("parkinfobox")
+                fluidRow(
+                  column(width = 3,
+                         box(width = NULL, status = "primary",
+                             textInput(inputId = "startloc",
+                                       label = "Starting from:",
+                                       placeholder = "e.g. 1234 Duke Drive, Durham NC"),
+                             numericInput(inputId = "distance",
+                                          label = "Maximum Travel Distance (mi):",
+                                          value = 500,
+                                          min = 0,
+                                          max = 3000),
+                             selectInput(inputId = "season",
+                                         label = "Travel Season:",
+                                         choices = c("Spring", "Summer", "Fall", "Winter")),
+                             selectInput(inputId = "activities",
+                                         label = "Activities:",
+                                         choices = c("Astronomy", "Stargazing", "Biking", "Boating", 
+                                                     "Camping", "Climbing", "Fishing", "Hiking", "Paddling",
+                                                     "Canoeing", "Kayaking", "Skiing", "Swimming", "Scenic Driving"),
+                                         multiple = TRUE), # returns a character vector
+                             prettyCheckbox(inputId = "fee", 
+                                            label = "Free (no entrance fee)",
+                                            shape = "round", bigger = TRUE, status = "info",
+                                            icon = icon("check"), animation = "jelly"
+                                            ),
+                             div(align = "right",
+                                 actionButton(inputId = "getrec", 
+                                              label = strong("Find a Match"), 
+                                              icon = icon("pagelines")
+                                              )
+                                 )
+                             )
+                         ),
+                  column(width = 9,
+                         # output park rec banner
+                         uiOutput("parkBox"),
+                         # tab box w/info about recommended park
+                         uiOutput("parkinfobox")
+                         )
+                  )
                 ),
         
         # directions tab
         tabItem(tabName = "directions",
-                box(width = 3, status = "primary",
+                box(width = 4, status = "primary",
                     textInput(inputId = "startlocmap",
                               label = "Starting from:",
                               placeholder = "e.g. 1234 Duke Drive, Durham NC"),
@@ -186,7 +208,7 @@ server <- function(input, output) {
     infoBox("Our Recommendation", 
             park_name, 
             str_c("Location(s): ", location),
-            icon = icon("map-pin"), color = "blue", width = 9,
+            icon = icon("map-pin"), color = "aqua", width = 12,
             href = url
             )
     })
@@ -254,7 +276,7 @@ server <- function(input, output) {
     tabBox(
       title = tagList(shiny::icon("info-circle"), "Info"),
       # The id lets us use input$tabset1 on the server to find the current tab
-      id = "tabset1", width = 9, side = "right",
+      id = "tabset1", width = 12, side = "right",
       tabPanel(title = tagList(shiny::icon("info"), "General Info"),
                sidebarLayout(
                  sidebarPanel(width = 7,
@@ -329,13 +351,13 @@ server <- function(input, output) {
   output$distanceBox <- renderUI({
     valueBox(
       paste0(totaldist(), " miles"), "Trip Distance", icon = icon("car"),
-      color = "blue", width = 3
+      color = "aqua", width = 4
     )
   })
   output$durationBox <- renderUI({
     valueBox(
       paste0(totaldur(), " hours"), "Trip Duration", icon = icon("clock"),
-      color = "purple", width = 3
+      color = "teal", width = 4
     )
   })
   
