@@ -6,11 +6,11 @@ library(dashboardthemes)
 library(shinydashboard)
 library(tidyverse)
 library(jsonlite)
+library(cowplot)
+library(magick)
 library(geosphere)
 library(randomForest)
 library(leaflet)
-library(rgdal)
-library(httr)
 library(openrouteservice)
 ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key for openroute service api
 
@@ -165,15 +165,125 @@ server <- function(input, output) {
             icon = icon("map-pin"), color = "blue", width = 9
             )
     })
+  # park image1
+  output$image1 <- renderPlot({
+    imageurl <- recData()$images[[1]]$url[1]
+    ggdraw() + draw_image(imageurl)
+  })
+  # park image2
+  output$image2 <- renderPlot({
+    if (nrow(recData()$images[[1]]) >= 2) {
+      imageurl <- recData()$images[[1]]$url[2]
+      ggdraw() + draw_image(imageurl)
+    }
+  })
+  # park image3
+  output$image3 <- renderPlot({
+    if (nrow(recData()$images[[1]]) >= 3) {
+      imageurl <- recData()$images[[1]]$url[3]
+      ggdraw() + draw_image(imageurl)
+    }
+  })
+  # park image4
+  output$image4 <- renderPlot({
+    if (nrow(recData()$images[[1]]) >= 4) {
+      imageurl <- recData()$images[[1]]$url[4]
+      ggdraw() + draw_image(imageurl)
+    }
+  })
+  # table of activities
+  output$act_tbl <- renderTable({
+    recData()$activities[[1]] %>% 
+      select(name) %>% 
+      rename(`Activities Offered` = name)
+  })
+  # table of hours
+  output$hours_tbl <- renderTable({
+    tbl <- recData()$hours[[1]]$standardHours[1,] %>%
+      rename(Monday = monday,
+             Tuesday = tuesday,
+             Wednesday = wednesday,
+             Thursday = thursday,
+             Friday = friday,
+             Saturday = saturday,
+             Sunday = sunday)
+    col_order <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    tbl[, col_order] %>%
+      pivot_longer(cols = Monday:Sunday, names_to = "Day", values_to = "Hours")
+  })
+  # table of fees
+  output$fees_tbl <- renderTable({
+    tbl <- recData()$fees[[1]] %>%
+      rename(Type = title, 
+             Description = description, 
+             Cost = cost)
+    col_order <- c("Type", "Cost", "Description")
+    tbl[, col_order]
+  })
   # output info about recommended park in tabBox
   output$parkinfobox <- renderUI({
+    parkdesc <- recData()$parkdesc #park description
+    weatherdesc <- recData()$weatherinfo #weather description
+    hoursdesc <- recData()$hours[[1]]$description[1] #hours description
+    
     tabBox(
       title = tagList(shiny::icon("info-circle"), "Info"),
       # The id lets us use input$tabset1 on the server to find the current tab
       id = "tabset1", width = 9, side = "right",
-      tabPanel("Hours"),
-      tabPanel("Weather"),
-      tabPanel("General Info")
+      tabPanel(title = tagList(shiny::icon("info"), "General Info"),
+               sidebarLayout(
+                 sidebarPanel(width = 7,
+                              plotOutput("image1")
+                              ),
+                 mainPanel(width = 5,
+                           br(),
+                           parkdesc,
+                           br(), br(),
+                           weatherdesc
+                           )
+                 )
+               ),
+      tabPanel(title = tagList(shiny::icon("hiking"), "Activities"),
+               sidebarLayout(
+                 sidebarPanel(width = 7,
+                              plotOutput("image2")
+                 ),
+                 mainPanel(width = 5, 
+                           fluidRow(br(),
+                                    column(width = 12, align = "center",
+                                           tableOutput("act_tbl"))
+                                    )
+                           )
+                 )
+               ),
+      tabPanel(title = tagList(shiny::icon("clock"), "Hours"),
+               sidebarLayout(
+                 sidebarPanel(width = 7,
+                              plotOutput("image3")
+                 ),
+                 mainPanel(width = 5, 
+                           fluidRow(br(),
+                                    hoursdesc,
+                                    br(), br(),
+                             column(width = 12, align = "center",
+                                    tableOutput("hours_tbl"))
+                             )
+                           )
+                 )
+               ),
+      tabPanel(title = tagList(shiny::icon("dollar-sign"), "Fees"),
+               sidebarLayout(
+                 sidebarPanel(width = 7,
+                              plotOutput("image4")
+                 ),
+                 mainPanel(width = 5, 
+                           fluidRow(br(),
+                                    column(width = 12, align = "center",
+                                           tableOutput("fees_tbl"))
+                           )
+                 )
+               )
+      )
     )
   })
   
