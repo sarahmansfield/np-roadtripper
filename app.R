@@ -1,10 +1,12 @@
 library(devtools)
 library(remotes)
-# remotes::install_github("GIScience/openrouteservice-r")
-# devtools::install_github("nik01010/dashboardthemes")
+remotes::install_github("GIScience/openrouteservice-r")
+devtools::install_github("nik01010/dashboardthemes")
 library(dashboardthemes)
 library(shinydashboard)
+library(shinyBS)
 library(tidyverse)
+library(purrr)
 library(jsonlite)
 library(cowplot)
 library(magick)
@@ -20,6 +22,13 @@ source("mapdirections.R")
 
 # user interface
 ui <- fluidPage(
+  # directions pop up window
+  bsModal(id = "directModal", 
+          title = "Directions", 
+          trigger = "getsteps", 
+          size = "large",
+          tableOutput(outputId = "steps_tbl")
+  ),
   dashboardPage(
     dashboardHeader(title = "NP Roadtripper"),
     dashboardSidebar(
@@ -123,12 +132,29 @@ ui <- fluidPage(
                                             "Pinnacles National Park", "Rocky Mountain National Park", "Saguaro National Park", "Shenandoah National Park",
                                             "Theodore Roosevelt National Park", "Voyageurs National Park", "White Sands National Park", "Wind Cave National Park",
                                             "Yellowstone National Park", "Yosemite National Park", "Zion National Park")),
-                    div(align = "right",
+                    div(style = "display:inline-block", width = 6,
                         actionButton(inputId = "getdirections", 
-                                     label = strong("Get Directions"), 
-                                     icon = icon("compass"))
+                                     label = strong("Map Your Route"),
+                                     icon = icon("compass")
+                                     )
+                        ),
+                    div(style = "display:inline-block",
+                        conditionalPanel(condition = "input.getdirections > 0",
+                                         # action button to get directions
+                                         actionButton(inputId = "getsteps", 
+                                                      label = strong("Directions"), 
+                                                      icon = icon("route")
+                                                      )
+                                         )
                         )
                     ),
+                
+                # valuebox showing total distance
+                uiOutput("distanceBox"),
+                # valuebox showing total duration
+                uiOutput("durationBox"),
+                # another valuebox showing weather maybe?
+                
                 # output map
                 leafletOutput("map")
                 ),
@@ -153,16 +179,15 @@ server <- function(input, output) {
   })
   # output park rec
   output$parkBox <- renderUI({
-    park_name <- recData() %>%
-      select(parkname) %>%
-      pull()
-    location <- recData() %>%
-      select(state) %>%
-      pull()
+    park_name <- recData()$parkname
+    location <- recData()$state
+    url <- recData()$url
+    
     infoBox("Our Recommendation", 
             park_name, 
             str_c("Location(s): ", location),
-            icon = icon("map-pin"), color = "blue", width = 9
+            icon = icon("map-pin"), color = "blue", width = 9,
+            href = url
             )
     })
   # park image1
@@ -287,12 +312,48 @@ server <- function(input, output) {
     )
   })
   
-  # directions map
-  leafletmap <- eventReactive(input$getdirections, {
+  # directions geoJSON object
+  directobj <- eventReactive(input$getdirections, {
     get_route(startpoint = input$startlocmap, park = input$parkdest)
   })
+  
+  # total distance of trip in miles
+  totaldist <- renderText({
+    round(directobj()$features[[1]]$properties$segments[[1]]$distance / 1609, 2)
+  })
+  # total duration of trip in hours
+  totaldur <- renderText({
+    round(directobj()$features[[1]]$properties$segments[[1]]$duration / 3600, 2)
+  })
+  
+  output$distanceBox <- renderUI({
+    valueBox(
+      paste0(totaldist(), " miles"), "Trip Distance", icon = icon("car"),
+      color = "blue", width = 3
+    )
+  })
+  output$durationBox <- renderUI({
+    valueBox(
+      paste0(totaldur(), " hours"), "Trip Duration", icon = icon("clock"),
+      color = "purple", width = 3
+    )
+  })
+  
+  # table of step by step route instructions
+  output$steps_tbl <- renderTable({
+    get_steps(directions = directobj())
+  })
+  
+  # map with route
   output$map <- renderLeaflet({
-    leafletmap()
+    park_long <- directobj()[["metadata"]][["query"]][["coordinates"]][2,1]
+    park_lat <- directobj()[["metadata"]][["query"]][["coordinates"]][2,2]
+
+    leaflet() %>%
+      addTiles() %>%
+      addGeoJSON(directobj(), fill = FALSE) %>%
+      fitBBox(directobj()$bbox) %>%
+      addMarkers(lng = park_long, lat = park_lat)
   })
 }
 
