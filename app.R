@@ -2,6 +2,7 @@ library(shinydashboard)
 library(dashboardthemes)
 library(shinyBS)
 library(shinyWidgets)
+library(shinyalert)
 library(tidyverse)
 library(purrr)
 library(jsonlite)
@@ -34,6 +35,8 @@ ui <- fluidPage(
       
     "))
   ),
+  useShinyalert(),
+  
   # directions pop up window
   bsModal(id = "directModal", 
           title = "Directions", 
@@ -41,6 +44,7 @@ ui <- fluidPage(
           size = "large",
           tableOutput(outputId = "steps_tbl")
   ),
+  
   dashboardPage(
     dashboardHeader(title = "NP Roadtripper"),
     dashboardSidebar(
@@ -99,8 +103,7 @@ ui <- fluidPage(
                              numericInput(inputId = "distance",
                                           label = "Maximum Travel Distance (mi):",
                                           value = 500,
-                                          min = 0,
-                                          max = 3000),
+                                          min = 0),
                              selectInput(inputId = "season",
                                          label = "Travel Season:",
                                          choices = c("Spring", "Summer", "Fall", "Winter")),
@@ -195,187 +198,289 @@ ui <- fluidPage(
 server <- function(input, output) {
   # get park recommendation
   recData <- eventReactive(input$getrec, {
+    # Create 0-row data frame which will be used to store data
+    dat <- data.frame(x = numeric(0), y = numeric(0))
+    
+    withProgress(message = 'Finding a park...', value = 0, {
+      # Number of times we'll go through the loop
+      n <- 10
+      
+      for (i in 1:n) {
+        # Each time through the loop, add another row of data. This is
+        # a stand-in for a long-running computation.
+        dat <- rbind(dat, data.frame(x = rnorm(1), y = rnorm(1)))
+        
+        # Increment the progress bar
+        incProgress(1/n)
+        
+        # Pause for 0.1 seconds to simulate a long computation.
+        Sys.sleep(0.1)
+      }
+    })
+    
     parkfinal <- calcDistance(input$startloc)
-    get_parkrec(parkdata = parkfinal, maxdistance = input$distance, activities = input$activities,
+    rec <- get_parkrec(parkdata = parkfinal, maxdistance = input$distance, activities = input$activities,
                 fee = as.numeric(input$fee), season = input$season)
+    if (is.null(rec)) {
+      shinyalert(title = "ERROR",
+                 text  = "There are no national parks within the specified distance from your starting point. Please expand your search.",
+                 type  = "error")
+    }
+    rec
   })
   # output park rec
   output$parkBox <- renderUI({
-    park_name <- recData()$parkname
-    location <- recData()$state
-    url <- recData()$url
-    
-    infoBox("Our Recommendation", 
-            park_name, 
-            str_c("Location(s): ", location),
-            icon = icon("map-pin"), color = "aqua", width = 12,
-            href = url
-            )
+    if (!is.null(recData())) {
+      park_name <- recData()$parkname
+      location <- recData()$state
+      url <- recData()$url
+      
+      infoBox("Our Recommendation", 
+              park_name, 
+              str_c("Location(s): ", location),
+              icon = icon("map-pin"), color = "aqua", width = 12,
+              href = url
+      )
+    }
     })
   # park image1
   output$image1 <- renderPlot({
-    imageurl <- recData()$images[[1]]$url[1]
-    ggdraw() + draw_image(imageurl)
+    if (!is.null(recData())) {
+      imageurl <- recData()$images[[1]]$url[1]
+      ggdraw() + draw_image(imageurl)
+    }
   })
   # park image2
   output$image2 <- renderPlot({
-    if (nrow(recData()$images[[1]]) >= 2) {
-      imageurl <- recData()$images[[1]]$url[2]
-      ggdraw() + draw_image(imageurl)
+    if (!is.null(recData())) {
+      if (nrow(recData()$images[[1]]) >= 2) {
+        imageurl <- recData()$images[[1]]$url[2]
+        ggdraw() + draw_image(imageurl)
+      }
     }
   })
   # park image3
   output$image3 <- renderPlot({
-    if (nrow(recData()$images[[1]]) >= 3) {
-      imageurl <- recData()$images[[1]]$url[3]
-      ggdraw() + draw_image(imageurl)
+    if (!is.null(recData())) {
+      if (nrow(recData()$images[[1]]) >= 3) {
+        imageurl <- recData()$images[[1]]$url[3]
+        ggdraw() + draw_image(imageurl)
+      }
     }
   })
   # park image4
   output$image4 <- renderPlot({
-    if (nrow(recData()$images[[1]]) >= 4) {
-      imageurl <- recData()$images[[1]]$url[4]
-      ggdraw() + draw_image(imageurl)
+    if (!is.null(recData())) {
+      if (nrow(recData()$images[[1]]) >= 4) {
+        imageurl <- recData()$images[[1]]$url[4]
+        ggdraw() + draw_image(imageurl)
+      }
     }
   })
   # table of activities
   output$act_tbl <- renderTable({
-    recData()$activities[[1]] %>% 
-      select(name) %>% 
-      rename(`Activities Offered` = name)
+    if (!is.null(recData())) {
+      recData()$activities[[1]] %>% 
+        select(name) %>% 
+        rename(`Activities Offered` = name)
+    }
   })
   # table of hours
   output$hours_tbl <- renderTable({
-    tbl <- recData()$hours[[1]]$standardHours[1,] %>%
-      rename(Monday = monday,
-             Tuesday = tuesday,
-             Wednesday = wednesday,
-             Thursday = thursday,
-             Friday = friday,
-             Saturday = saturday,
-             Sunday = sunday)
-    col_order <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-    tbl[, col_order] %>%
-      pivot_longer(cols = Monday:Sunday, names_to = "Day", values_to = "Hours")
+    if (!is.null(recData())) {
+      tbl <- recData()$hours[[1]]$standardHours[1,] %>%
+        rename(Monday = monday,
+               Tuesday = tuesday,
+               Wednesday = wednesday,
+               Thursday = thursday,
+               Friday = friday,
+               Saturday = saturday,
+               Sunday = sunday)
+      col_order <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+      tbl[, col_order] %>%
+        pivot_longer(cols = Monday:Sunday, names_to = "Day", values_to = "Hours")
+    }
   })
   # table of fees
   output$fees_tbl <- renderTable({
-    tbl <- recData()$fees[[1]] %>%
-      rename(Type = title, 
-             Description = description, 
-             Cost = cost)
-    col_order <- c("Type", "Cost", "Description")
-    tbl[, col_order]
+    if (!is.null(recData())) {
+      tbl <- recData()$fees[[1]] %>%
+        rename(Type = title, 
+               Description = description, 
+               Cost = cost)
+      col_order <- c("Type", "Cost", "Description")
+      tbl[, col_order]
+    }
   })
   # output info about recommended park in tabBox
   output$parkinfobox <- renderUI({
-    parkdesc <- recData()$parkdesc #park description
-    weatherdesc <- recData()$weatherinfo #weather description
-    hoursdesc <- recData()$hours[[1]]$description[1] #hours description
-    
-    tabBox(
-      title = tagList(shiny::icon("info-circle"), "Info"),
-      # The id lets us use input$tabset1 on the server to find the current tab
-      id = "tabset1", width = 12, side = "right",
-      tabPanel(title = tagList(shiny::icon("info"), "General Info"),
-               sidebarLayout(
-                 sidebarPanel(width = 7,
-                              plotOutput("image1")
-                              ),
-                 mainPanel(width = 5,
-                           br(),
-                           parkdesc,
-                           br(), br(),
-                           weatherdesc
-                           )
+    if (!is.null(recData())) {
+      parkdesc <- recData()$parkdesc #park description
+      weatherdesc <- recData()$weatherinfo #weather description
+      hoursdesc <- recData()$hours[[1]]$description[1] #hours description
+      
+      tabBox(
+        title = tagList(shiny::icon("info-circle"), "Info"),
+        # The id lets us use input$tabset1 on the server to find the current tab
+        id = "tabset1", width = 12, side = "right",
+        tabPanel(title = tagList(shiny::icon("info"), "General Info"),
+                 sidebarLayout(
+                   sidebarPanel(width = 7,
+                                plotOutput("image1")
+                   ),
+                   mainPanel(width = 5,
+                             br(),
+                             parkdesc,
+                             br(), br(),
+                             weatherdesc
+                   )
                  )
-               ),
-      tabPanel(title = tagList(shiny::icon("hiking"), "Activities"),
-               sidebarLayout(
-                 sidebarPanel(width = 7,
-                              plotOutput("image2")
-                 ),
-                 mainPanel(width = 5, 
-                           fluidRow(br(),
-                                    column(width = 12, align = "center",
-                                           tableOutput("act_tbl"))
-                                    )
-                           )
-                 )
-               ),
-      tabPanel(title = tagList(shiny::icon("clock"), "Hours"),
-               sidebarLayout(
-                 sidebarPanel(width = 7,
-                              plotOutput("image3")
-                 ),
-                 mainPanel(width = 5, 
-                           fluidRow(br(),
-                                    hoursdesc,
-                                    br(), br(),
-                             column(width = 12, align = "center",
-                                    tableOutput("hours_tbl"))
+        ),
+        tabPanel(title = tagList(shiny::icon("hiking"), "Activities"),
+                 sidebarLayout(
+                   sidebarPanel(width = 7,
+                                plotOutput("image2")
+                   ),
+                   mainPanel(width = 5, 
+                             fluidRow(br(),
+                                      column(width = 12, align = "center",
+                                             tableOutput("act_tbl"))
                              )
-                           )
+                   )
                  )
-               ),
-      tabPanel(title = tagList(shiny::icon("dollar-sign"), "Fees"),
-               sidebarLayout(
-                 sidebarPanel(width = 7,
-                              plotOutput("image4")
-                 ),
-                 mainPanel(width = 5, 
-                           fluidRow(br(),
-                                    column(width = 12, align = "center",
-                                           tableOutput("fees_tbl"))
-                           )
+        ),
+        tabPanel(title = tagList(shiny::icon("clock"), "Hours"),
+                 sidebarLayout(
+                   sidebarPanel(width = 7,
+                                plotOutput("image3")
+                   ),
+                   mainPanel(width = 5, 
+                             fluidRow(br(),
+                                      hoursdesc,
+                                      br(), br(),
+                                      column(width = 12, align = "center",
+                                             tableOutput("hours_tbl"))
+                             )
+                   )
                  )
-               )
+        ),
+        tabPanel(title = tagList(shiny::icon("dollar-sign"), "Fees"),
+                 sidebarLayout(
+                   sidebarPanel(width = 7,
+                                plotOutput("image4")
+                   ),
+                   mainPanel(width = 5, 
+                             fluidRow(br(),
+                                      column(width = 12, align = "center",
+                                             tableOutput("fees_tbl"))
+                             )
+                   )
+                 )
+        )
       )
-    )
+    }
   })
   
   # directions geoJSON object
   directobj <- eventReactive(input$getdirections, {
-    get_route(startpoint = input$startlocmap, park = input$parkdest)
+    # Create 0-row data frame which will be used to store data
+    dat <- data.frame(x = numeric(0), y = numeric(0))
+    
+    withProgress(message = 'Getting directions...', value = 0, {
+      # Number of times we'll go through the loop
+      n <- 10
+      
+      for (i in 1:n) {
+        # Each time through the loop, add another row of data. This is
+        # a stand-in for a long-running computation.
+        dat <- rbind(dat, data.frame(x = rnorm(1), y = rnorm(1)))
+        
+        # Increment the progress bar
+        incProgress(1/n)
+        
+        # Pause for 0.1 seconds to simulate a long computation.
+        Sys.sleep(0.1)
+      }
+    })
+    
+    route <- get_route(startpoint = input$startlocmap, park = input$parkdest)
+    if (is.null(route)) {
+      shinyalert(title = "ERROR",
+                 text  = "This app only supports route distances up to 3000 miles. Please select another park closer to your starting location.",
+                 type  = "error")
+    }
+    route
   })
   
   # total distance of trip in miles
   totaldist <- renderText({
-    round(directobj()$features[[1]]$properties$segments[[1]]$distance / 1609, 2)
+    if (!is.null(directobj())) {
+      round(directobj()$features[[1]]$properties$segments[[1]]$distance / 1609, 2)
+    }
   })
   # total duration of trip in hours
   totaldur <- renderText({
-    round(directobj()$features[[1]]$properties$segments[[1]]$duration / 3600, 2)
+    if (!is.null(directobj())) {
+      round(directobj()$features[[1]]$properties$segments[[1]]$duration / 3600, 2)
+    }
   })
   
   output$distanceBox <- renderUI({
-    valueBox(
-      paste0(totaldist(), " miles"), "Trip Distance", icon = icon("car"),
-      color = "aqua", width = 4
-    )
+    if (!is.null(directobj())) {
+      valueBox(
+        paste0(totaldist(), " miles"), "Trip Distance", icon = icon("car"),
+        color = "aqua", width = 4
+      )
+    }
   })
   output$durationBox <- renderUI({
-    valueBox(
-      paste0(totaldur(), " hours"), "Trip Duration", icon = icon("clock"),
-      color = "teal", width = 4
-    )
+    if (!is.null(directobj())) {
+      valueBox(
+        paste0(totaldur(), " hours"), "Trip Duration", icon = icon("clock"),
+        color = "teal", width = 4
+      )
+    }
   })
   
   # table of step by step route instructions
   output$steps_tbl <- renderTable({
-    get_steps(directions = directobj())
+    if (!is.null(directobj())) {
+      get_steps(directions = directobj())
+    }
   })
   
   # map with route
   output$map <- renderLeaflet({
-    park_long <- directobj()[["metadata"]][["query"]][["coordinates"]][2,1]
-    park_lat <- directobj()[["metadata"]][["query"]][["coordinates"]][2,2]
-
-    leaflet() %>%
-      addTiles() %>%
-      addGeoJSON(directobj(), fill = FALSE) %>%
-      fitBBox(directobj()$bbox) %>%
-      addMarkers(lng = park_long, lat = park_lat)
+    if (!is.null(directobj())) {
+      park_long <- directobj()[["metadata"]][["query"]][["coordinates"]][2,1]
+      park_lat <- directobj()[["metadata"]][["query"]][["coordinates"]][2,2]
+      
+      # Create 0-row data frame which will be used to store data
+      dat <- data.frame(x = numeric(0), y = numeric(0))
+      
+      withProgress(message = 'Generating map...', value = 0, {
+        # Number of times we'll go through the loop
+        n <- 10
+        
+        for (i in 1:n) {
+          # Each time through the loop, add another row of data. This is
+          # a stand-in for a long-running computation.
+          dat <- rbind(dat, data.frame(x = rnorm(1), y = rnorm(1)))
+          
+          # Increment the progress bar
+          incProgress(1/n)
+          
+          # Pause for 0.1 seconds to simulate a long computation.
+          Sys.sleep(0.1)
+        }
+      })
+      
+      leaflet() %>%
+        addTiles() %>%
+        addGeoJSON(directobj(), fill = FALSE) %>%
+        fitBBox(directobj()$bbox) %>%
+        addMarkers(lng = park_long, lat = park_lat)
+    }
   })
 }
 
