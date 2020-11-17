@@ -16,6 +16,12 @@ get_route <- function(startpoint, park) {
     select(latitude) %>%
     pull()
   
+  # exit function and return null if distance between startpoint and park is over 3000 mile limit
+  dist <- distHaversine(cbind(input_long, input_lat), cbind(park_long, park_lat))/1609
+  if (dist > 3000) {
+    return(NULL)
+  }
+  
   coordinates <- list(c(input_long, input_lat), c(park_long, park_lat))
   radius = c(10000, 10000)
   directions <- ors_directions(coordinates, radiuses = radius)

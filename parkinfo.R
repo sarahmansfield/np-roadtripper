@@ -23,6 +23,12 @@ get_parkrec <- function(parkdata, maxdistance, activities, fee, season) {
   parkdata <- parkdata %>%
     filter(distance <= maxdistance) %>%
     select(-c(longitude, latitude, distance))
+  
+  # exit function and return null if no parks are within the specified distance
+  if (nrow(parkdata) == 0) {
+    return(NULL)
+  }
+  
   parkdata$parkname <- factor(parkdata$parkname)
   
   rf.mod <- randomForest(parkname~., data = parkdata)
