@@ -73,7 +73,12 @@ ui <- fluidPage(
                   column(12, align = "center",
                          h2(strong("Welcome to the National Park Roadtrip Planner!")),
                          br(),
-                         h5("Description"),
+                         h5("Imagine you need a break. Life can be hard, so you decide to take a vacation. But 
+                         where should you go? International travel can be stressful, expensive, and difficult. Perhaps
+                         you're even scared of planes. What should you do? Well, we have the answer for you! Take a 
+                         road trip to one of over 60 of America's beautiful national parks!
+                         Planning road trips can be time consuming, but we can help make it easier-
+                            Welcome to the National Park Roadtripper app! "),
                          tags$div(
                            "Created using the ",
                            tags$a(href="https://www.nps.gov/subjects/developer/index.htm", "NPS API,"),
@@ -83,6 +88,7 @@ ui <- fluidPage(
                          ),
                          hr(),
                          h3(strong("How to use the app:"))
+                         
                          )
                   )
                 ),
