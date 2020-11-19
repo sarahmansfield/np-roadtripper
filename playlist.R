@@ -1,3 +1,4 @@
+devtools::install_github('charlie86/spotifyr')
 library(spotifyr)
 library(lubridate)
 
@@ -14,9 +15,6 @@ beatles <- get_artist_audio_features('the beatles')
 #          played_at = as_datetime(played_at)) %>% 
 #   select(track.name, artist.name, track.album.name, played_at) %>% 
 #   kable()
-
-# create playlist that is an equal mix of selected genres
-categories <- get_categories()
 
 genres <- c("acoustic",
             "alternative", 
@@ -39,7 +37,39 @@ genres <- c("acoustic",
             "soul", 
             "world-music")
 
-recs <- get_recommendations(limit = 50, seed_genres = c("k-pop", 
+# function that creates a new playlist for spotify user based on up to 5 genres
+
+playlist <- function(genres, trip_time) {
+  
+  # get recommendations 
+  recs <- get_recommendations(limit = 100, seed_genres = genres) 
+  
+  # filter amount of songs based on trip_time
+  time_sum <- c()
+  for (i in 1:length(recs)) {
+    
+    time_sum[i] <- sum(time_sum) + recs$duration_ms[i]
+    
+    if (time_sum[i] > trip_time) {
+      break
+    }
+  }
+  
+  recs[1:length(time_sum), ]
+}
+
+
+
+
+g <- c("k-pop", "pop", "punk")
+x <- playlist(g, trip_time)
+
+
+recs <- get_recommendations(limit = 100, seed_genres = c("k-pop", 
                                                         "pop", 
-                                                        "punk"))
+                                                        "punk")) 
+
+artist <- map(recs$artists, `[[`, "name") %>% unlist()
+
+
 
