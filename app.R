@@ -19,6 +19,7 @@ ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key
 # load api helper functions
 source("parkinfo.R")
 source("mapdirections.R")
+source("playlist.R")
 
 # user interface
 ui <- fluidPage(
