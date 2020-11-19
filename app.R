@@ -452,6 +452,8 @@ server <- function(input, output) {
   # map with route
   output$map <- renderLeaflet({
     if (!is.null(directobj())) {
+      home_long <- directobj()[["metadata"]][["query"]][["coordinates"]][1,1]
+      home_lat <- directobj()[["metadata"]][["query"]][["coordinates"]][1,2]
       park_long <- directobj()[["metadata"]][["query"]][["coordinates"]][2,1]
       park_lat <- directobj()[["metadata"]][["query"]][["coordinates"]][2,2]
       
@@ -479,6 +481,7 @@ server <- function(input, output) {
         addTiles() %>%
         addGeoJSON(directobj(), fill = FALSE) %>%
         fitBBox(directobj()$bbox) %>%
+        addAwesomeMarkers(lng = home_long, lat = home_lat, icon = awesomeIcons("home")) %>%
         addMarkers(lng = park_long, lat = park_lat)
     }
   })
