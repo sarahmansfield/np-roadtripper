@@ -4,17 +4,30 @@ library(lubridate)
 library(knitr)
 
 
-Sys.setenv(SPOTIFY_CLIENT_ID = '424f8cebaa33461eb2e2ee3f821291a4')
-Sys.setenv(SPOTIFY_CLIENT_SECRET = 'eea82f38c4d44094b8e0c328c9a11885')
+# Sys.setenv(SPOTIFY_CLIENT_ID = '424f8cebaa33461eb2e2ee3f821291a4')
+# Sys.setenv(SPOTIFY_CLIENT_SECRET = 'eea82f38c4d44094b8e0c328c9a11885')
+# 
+# access_token <- get_spotify_access_token()
 
-access_token <- get_spotify_access_token()
+get_token <- function(){
+  clientID <- "424f8cebaa33461eb2e2ee3f821291a4"
+  secret <- "eea82f38c4d44094b8e0c328c9a11885"
+  
+  response = POST(
+    'https://accounts.spotify.com/api/token',
+    accept_json(),
+    authenticate(clientID, secret),
+    body = list(grant_type = 'client_credentials'),
+    encode = 'form'
+  )
+  
+  token = content(response)$access_token
+  authorization.header = paste0("Bearer ", token)
+}
 
-beatles <- get_artist_audio_features('the beatles')
+authorization.header = get_token()
 
-recently_played <- get_my_recently_played(limit = 5) %>%
-  mutate(artist.name = map_chr(track.artists, function(x) x$name[1]),
-         played_at = as_datetime(played_at)) %>%
-  select(track.name, artist.name, track.album.name, played_at)
+
 
 genres <- c("acoustic",
             "alternative", 
@@ -58,11 +71,6 @@ get_playlist_genre <- function(genres) {
 
 }
 
-x$album.images[[1]]$url
-
-
-
-
 
 # # filter amount of songs based on trip_time
 # time_sum <- c()
@@ -77,15 +85,30 @@ x$album.images[[1]]$url
 # 
 # recs[1:length(time_sum), ]
 
-
-
+# test - create playlist and add tracks 
 
 
 g <- c("k-pop", "pop", "punk")
 x <- get_playlist_genre(g)
 
+create_playlist(user_id = "aasha_r", name = "Park Playlist")
 
-recs <- get_recommendations(limit = 100, seed_genres = c("k-pop",
-                                                        "pop",
-                                                        "punk"))
+track_uris <- x$uri %>% paste(collapse = ",")
 
+
+
+playlist_id <- get_my_playlists() %>%
+  filter(name == "Park Playlist") %>%
+  select(id) %>%
+  unlist()
+
+#https://api.spotify.com/v1/playlists/{playlist_id}/tracks
+
+url = str_c("https://api.spotify.com/v1/playlists/", playlist_id, "/tracks?", 
+            "uris=", track_uris)
+
+p <- content(GET(url = sprintf(url),
+                 config = add_headers(authorization = authorization.header)))
+
+
+#"https://api.spotify.com/v1/playlists/6MUSN8cFMp3UzhUMZi3PiS/tracks?uris=spotify%3Atrack%3A1rFMYAZxBoAKSzXI54brMu%2Cspotify%3Atrack%3A0J3DXNGMAW5ZcspbCB6Is6%2Cspotify%3Atrack%3A4QtiVmuA88tPQiCOHZuQ5b" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer BQAQLmYhAq9bASZ6r2Lve_8PIIA4NMrIAwzsP0VjdXqv4lCS-LzwE1nqlsJYXPD5B1g8XEKrcNbePC0ea0RLXGaXjD4Y72FeUa6AnGBYUnT8GG8L_2ZjqsHb-u2VLsjNOFVEvlXN8iAvtsRYVvR1K9yiR2g8lSHNfcU9AHRH-gY"

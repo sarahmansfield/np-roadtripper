@@ -617,17 +617,15 @@ server <- function(input, output) {
   # create playlist_genre data (Aasha)
   playlist_genre <- reactive({
     playlist_genre <- playlist_genre_data() %>%
-      select(name, artist_name, album.name, album.images)
+      select(name, artist_name, album.name)
   })
   
   # output image of first album in data
-  picture_genre <- reactive({
-    picture_genre <- playlist_genre() %>%
-      album.images[[1]]$url[1]
-  })
   
-  output$picture_genre <- renderText(picture_genre()$Image)
-  
+  output$picture_genre <- renderText(str_c("<img src='", 
+                                           playlist_genre_data()$album.images[[1]]$url[1],
+                                           "' height = '300'></img"))
+
   # output playlist_genre preview datatable (Aasha)
   output$playlist_genre_table <- DT::renderDataTable({
     datatable(playlist_genre(), 
