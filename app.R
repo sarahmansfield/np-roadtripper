@@ -159,28 +159,35 @@ ui <- fluidPage(
         # user guide tab
         tabItem(tabName = "userguide",
                 fluidRow(
-                  column(12, align = "center",
-                         h2(strong("Welcome to the National Park Roadtrip Planner!")),
-                         br(),
-                         h4("Imagine you need a break. Life can be hard, so you decide to take a vacation. But 
+                  column(2, align = "left", 
+                         tags$img(src = "treefinal.png", width = "50%", align = "right", opacity = "0.4")
+                  ),
+                  column(8, align = "center",
+                         div(h2(("Welcome to the National Park Roadtrip Planner!")), style = "color:#1f78b4 ; border-bottom:3px solid #1f78b4")), 
+                  column(2, align = "right", 
+                         tags$img(src = "treefinal.png", width = "50%", align = "left"))),
+                  fluidRow(
+                    column(12, align = "center", 
+                           h4("Imagine you need a break. Life can be hard, so you decide to take a vacation. But 
                          where should you go? International travel can be stressful, expensive, and difficult. Perhaps
                          you're even scared of planes. What should you do? Well, we have the answer for you! Take a 
                          road trip to one of 50 of America's beautiful national parks!
                          Planning road trips can be time consuming, but we can help make it easier -
                             Welcome to the National Park Roadtripper app! "),
-                         tags$div(
-                           "Created using the ",
-                           tags$a(href="https://www.nps.gov/subjects/developer/index.htm", "NPS API,"),
-                           tags$a(href="https://openrouteservice.org/", "Openroute Service API,"),
-                           "and the ",
-                           tags$a(href="https://developer.spotify.com/documentation/web-api/", "Spotify Web API")
-                         ),
-                         hr(),
-                         h3(strong("How to use the app:"))
-                         
-                         )
+                           )),
+                  fluidRow(column(12, align = "center", 
+                    tags$div(
+                      "Created using the ",
+                      tags$a(href="https://www.nps.gov/subjects/developer/index.htm", "NPS API,"),
+                      tags$a(href="https://openrouteservice.org/", "Openroute Service API,"),
+                      "and the ",
+                      tags$a(href="https://developer.spotify.com/documentation/web-api/", "Spotify Web API")
+                    ),
+                    hr(),
+                    h3(strong("How to use the app:"))
+                    
                   )
-                ),
+                         )),
         
         # find a park tab
         tabItem(tabName = "findpark",
