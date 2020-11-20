@@ -191,7 +191,6 @@ ui <- fluidPage(
                 uiOutput("distanceBox"),
                 # valuebox showing total duration
                 uiOutput("durationBox"),
-                # another valuebox showing weather maybe?
                 
                 # output map
                 leafletOutput("map")
@@ -200,31 +199,32 @@ ui <- fluidPage(
         # playlist parks
         tabItem(tabName = "playlist_park", 
                 fluidRow(
-                box(width = 8, status = "primary", 
-                    selectInput(inputId = "parkdest_playlist", 
-                                label = "Choose Park Destination:",
-                                choices = c("Acadia National Park" = "117MQyf7iOjLaUVN7zcJw6", 
-                                            "Arches National Park" = "0kGeNA9vutRnoispZLvWOA", 
-                                            "Channel Islands National Park" = "5bpuJAPKK6SXG1Helc1TsB", 
-                                            "Glacier National Park" = "3WUcsMCdeFJgYEinv2MiYS", 
-                                            "Grand Teton National Park" = "51KaBvMKCEmlc1bwPd0Amb",
-                                            "Great Smoky Mountains National Park" = "70g2uez7L1UavQ6jCuV5Ps", 
-                                            "Joshua Tree National Park" = "5LrXMXO5HSsVLVrqU4PouM", 
-                                            "Mount Rainier National Park" = "1tiTFQFTMLuS1GOR2gMxK4", 
-                                            "Olympic National Park" = "7pv5aJWeY3jYBmmFx5uOXz", 
-                                            "Rocky Mountain National Park" = "44cvJuJMnUUyRcP519QzXs", 
-                                            "Sequoia and Kings Canyon National Park" = "6lIqG5vA4WEuqYjelgn8iV",
-                                            "Shenandoah National Park" = "2TDsIDS7fHYNSOlkaF16Dh",
-                                            "Yellowstone National Park" = "4X43PiVJL1cGwxYnioeyHU", 
-                                            "Yosemite National Park" = "4Te6Eha65DlRTwfO5O8iJD", 
-                                            "Zion National Park" = "5HIMOLC7zwxmy2C3NJJcXc")
-                    ))
-                    ), 
-                fluidRow(
-                  box(width = 8,htmlOutput("picture"))),
-                fluidRow(
-                  box(htmlOutput("play")))
-
+                  column(width = 4, align = "center",
+                         box(width = NULL, status = "primary", 
+                             selectInput(inputId = "parkdest_playlist", 
+                                         label = "Choose Park Destination:",
+                                         choices = c("Acadia National Park" = "117MQyf7iOjLaUVN7zcJw6", 
+                                                     "Arches National Park" = "0kGeNA9vutRnoispZLvWOA", 
+                                                     "Channel Islands National Park" = "5bpuJAPKK6SXG1Helc1TsB", 
+                                                     "Glacier National Park" = "3WUcsMCdeFJgYEinv2MiYS", 
+                                                     "Grand Teton National Park" = "51KaBvMKCEmlc1bwPd0Amb",
+                                                     "Great Smoky Mountains National Park" = "70g2uez7L1UavQ6jCuV5Ps", 
+                                                     "Joshua Tree National Park" = "5LrXMXO5HSsVLVrqU4PouM", 
+                                                     "Mount Rainier National Park" = "1tiTFQFTMLuS1GOR2gMxK4", 
+                                                     "Olympic National Park" = "7pv5aJWeY3jYBmmFx5uOXz", 
+                                                     "Rocky Mountain National Park" = "44cvJuJMnUUyRcP519QzXs", 
+                                                     "Sequoia and Kings Canyon National Park" = "6lIqG5vA4WEuqYjelgn8iV",
+                                                     "Shenandoah National Park" = "2TDsIDS7fHYNSOlkaF16Dh",
+                                                     "Yellowstone National Park" = "4X43PiVJL1cGwxYnioeyHU", 
+                                                     "Yosemite National Park" = "4Te6Eha65DlRTwfO5O8iJD", 
+                                                     "Zion National Park" = "5HIMOLC7zwxmy2C3NJJcXc")
+                                         ),
+                             htmlOutput("picture")
+                             )
+                         ),
+                  column(width = 8, align = "center",
+                         htmlOutput("play"))
+                    )
                 ),
         
         # playlist genre
@@ -428,11 +428,9 @@ server <- function(input, output) {
   output$picture<-renderText(picture()$Image)
   
   output$play <- renderUI({
-    tags$iframe(src='https://open.spotify.com/embed/playlist/6lIqG5vA4WEuqYjelgn8iV', width='300', height='380', frameborder='0', allowtransparency='true', allow='encrypted-media')
-    })
-  
-    
-    ### "<iframe src='https://open.spotify.com/embed/playlist/6lIqG5vA4WEuqYjelgn8iV' width='300' height='380' frameborder='0' allowtransparency='true' allow='encrypted-media'></iframe>")
+    url <- str_c("https://open.spotify.com/embed/playlist/", input$parkdest_playlist)
+    HTML(paste0('<iframe src="', url,'" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
+  })
   
 # ----------------------------------------------------------------------------------------------------
   # output info about recommended park in tabBox
