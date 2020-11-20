@@ -281,6 +281,12 @@ ui <- fluidPage(
         
         # playlist parks
         tabItem(tabName = "playlist_park", 
+                fluidRow(width = 12, align = "center",
+                         
+                         valueBox("Need the perfect playlist for your adventure?", 
+                                  "Choose a National Park to see a curated Spotify playlist courtesy of Parks Project!", 
+                                  icon = icon("guitar"), color = "teal", width = 12)
+                ),
                 fluidRow(
                   column(width = 4, align = "center",
                          box(width = NULL, status = "primary", 
@@ -312,15 +318,29 @@ ui <- fluidPage(
         
         # playlist genre
         tabItem(tabName = "playlist_genre",
+                fluidRow(width = 12, align = "center",
+                         
+                         valueBox("Need the perfect playlist for your adventure? ",
+                                  "Choose your favorite music genre for our recommendation!", 
+                                  icon = icon("guitar"), color = "teal", width = 12)
+                ),
                 fluidRow(
                   column(width = 4, align = "center", 
                          box(width = NULL, status = "primary", 
                              selectInput(inputId = "genre", 
                                          label = "Choose Genre", 
-                                         choices = c("pop", "rock", "party", "chill", 
-                                                     "hiphop", "edm_dance", "jazz", 
-                                                     "rnb", "country", "latin",
-                                                     "holidays", "indie_alt")), 
+                                         choices = c("Pop" = "pop", 
+                                                     "Rock" = "rock", 
+                                                     "Party" = "party", 
+                                                     "Chill" = "chill", 
+                                                     "Hip hop" = "hiphop", 
+                                                     "EDM" = "edm_dance", 
+                                                     "Jazz" = "jazz", 
+                                                     "R&B" = "rnb", 
+                                                     "Country" = "country", 
+                                                     "Latin" = "latin",
+                                                     "Holidays" = "holidays", 
+                                                     "Indie / Alternative" = "indie_alt")), 
                              htmlOutput("picture_genre")
                              )
                          ), 
