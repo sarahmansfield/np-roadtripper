@@ -707,13 +707,8 @@ server <- function(input, output) {
     url <- str_c("https://open.spotify.com/embed/playlist/", playlist_id_genre())
     HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
   })
-  
-<<<<<<< HEAD
-  output$apptitle <- renderText("NP Roadtripper")
-=======
-  
 
->>>>>>> ce866740e82ab23a2bcb0c8293f2e92b9d28b7c6
+  output$apptitle <- renderText("NP Roadtripper")
   
 }
 
