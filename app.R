@@ -11,6 +11,7 @@ library(magick)
 library(geosphere)
 library(randomForest)
 library(leaflet)
+library(DT)
 library(remotes)
 remotes::install_github("GIScience/openrouteservice-r")
 library(openrouteservice)
@@ -228,7 +229,7 @@ ui <- fluidPage(
         
         # playlist genre
         tabItem(tabName = "playlist_genre",
-                box(width = 3, status = "primary", 
+                box(width = 8, status = "primary", 
                     selectInput(inputId = "genre", 
                                 label = "Choose Genres (Up to 5)",
                                 choices = c("acoustic", "alternative", "chill",
@@ -237,7 +238,18 @@ ui <- fluidPage(
                                             "indie", "jazz", "kids", "k-pop", 
                                             "pop", "punk", "r-n-b", "rock", 
                                             "soul", "world-music"), 
-                                multiple = TRUE)
+                                multiple = TRUE), 
+                    div(align = "right", 
+                        actionButton(inputId = "get_playlist_genre", 
+                                     label = strong("Preview Playlist")))
+                ), 
+                fluidRow(
+                  box(width = 8, htmlOutput("picture_genre"))
+                ), 
+                fluidRow(
+                  box(width = 10, 
+                      DT::dataTableOutput(outputId = "playlist_genre_table"
+                  ))
                 )
                 ),
         
@@ -596,6 +608,33 @@ server <- function(input, output) {
         addMarkers(lng = park_long, lat = park_lat)
     }
   })
+  
+  # pull playlist_genre data (Aasha)
+  playlist_genre_data <- eventReactive(input$get_playlist_genre, {
+    get_playlist_genre(genres = input$genre)
+  })
+  
+  # create playlist_genre data (Aasha)
+  playlist_genre <- reactive({
+    playlist_genre <- playlist_genre_data() %>%
+      select(name, artist_name, album.name, album.images)
+  })
+  
+  # output image of first album in data
+  picture_genre <- reactive({
+    picture_genre <- playlist_genre() %>%
+      album.images[[1]]$url[1]
+  })
+  
+  output$picture_genre <- renderText(picture_genre()$Image)
+  
+  # output playlist_genre preview datatable (Aasha)
+  output$playlist_genre_table <- DT::renderDataTable({
+    datatable(playlist_genre(), 
+              )
+  })
+
+  
 }
 
 # run the application 
