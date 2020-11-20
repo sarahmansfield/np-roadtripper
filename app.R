@@ -199,8 +199,30 @@ ui <- fluidPage(
         tabItem(tabName = "playlist"
                 ),
         
-        # articles tab
-        tabItem(tabName = "articles")
+        # Packing List tab
+        tabItem(tabName = "articles", 
+                box(width = 4, status = "primary",
+                    selectInput(inputId = "season",
+                              label = "What time of year are you camping?",
+                              choices = c("Winter!", "Spring", "Summer", "Autumn")),
+                    selectInput(inputId = "cooking",
+                                label = "Do you plan on cooking while you camp?:",
+                                choices = c("Yes!", "No!")),
+                    div(style = "display:inline-block", width = 6,
+                        actionButton(inputId = "getList", 
+                                     label = strong("Get Your Camping Packing List")
+                        )
+                    ),
+                    div(style = "display:inline-block",
+                        conditionalPanel(condition = "input.getdirections > 0",
+                                         # action button to get directions
+                                         actionButton(inputId = "getsteps", 
+                                                      label = strong("Directions"), 
+                                                      icon = icon("route")
+                                         )
+                        )
+                    )
+                ))
         )
       )
     )
