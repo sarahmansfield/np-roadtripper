@@ -11,8 +11,13 @@ library(magick)
 library(geosphere)
 library(randomForest)
 library(leaflet)
+library(DT)
+library(spotifyr)
+library(lubridate)
+library(knitr)
+library(httr)
 library(remotes)
-remotes::install_github("GIScience/openrouteservice-r")
+#remotes::install_github("GIScience/openrouteservice-r")
 library(openrouteservice)
 ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key for openroute service api
 
@@ -22,17 +27,21 @@ source("mapdirections.R")
 source("playlist.R")
 source("playlist_parks.R")
 
+
 # user interface
 ui <- fluidPage(
+  title = "National Park Roadtripper",
+  
   # change header font
   tags$head(
     tags$style(HTML("
       @import url('//fonts.googleapis.com/css?family=Lobster|Cabin:400,700');
       
-      .main-header .logo {
+      #apptitle {
       font-family: 'Lobster', cursive;
       font-weight: bold;
-      font-size: 24px;
+      font-size: 30px;
+      text-align: center;
       }
       
     "))
@@ -48,9 +57,22 @@ ui <- fluidPage(
   ),
   
   dashboardPage(
-    dashboardHeader(title = "NP Roadtripper"),
+    dashboardHeader(#title = "NP Roadtripper"
+                    titleWidth='100%',
+                    title = shiny::span(
+                      tags$img(src="https://www.travelyosemite.com/media/820617/adobestock_196063806_1000x500.jpg", width = "34%", align = "left"),
+                      tags$img(src="https://media.deseretdigital.com/file/fdd8867843?type=jpeg&quality=55&c=15&a=4379240d", width = '34%', align = "center"),
+                      tags$img(src="https://www.yellowstonepark.com/.image/t_share/MTUxMzk3NjQ1MjMzOTU2MDk1/teton-bison_andrecostantini_700.jpg", width = '32%', align = "right")
+                   #   column(12, class="title-box", 
+                   #          tags$h1(class="primary-title", style='margin-top:10px;', 'National Park Roadtripper!')
+                    
+                 #  https://www.usnews.com/dims4/USNEWS/c780ac6/2147483647/resize/1200x%3E/quality/85/?url=http%3A%2F%2Fmedia.beam.usnews.com%2F02%2F5a%2F9f703dee4990843b40902de4c617%2Fyosemite2-getty-loic-lagarde.jpg
+                    
+                    )),
     dashboardSidebar(
       sidebarMenu(id = "sidebar",
+        textOutput("apptitle"),
+        br(),
         menuItem("User Guide", tabName = "userguide", 
                  icon = icon("book-open")),
         menuItem("Find a Park", tabName = "findpark", 
@@ -64,12 +86,73 @@ ui <- fluidPage(
                  menuSubItem("Playlist by Genre",
                              tabName = "playlist_genre")),
         menuItem("Camping Packing List", tabName = "packing", 
-                 icon = icon("newspaper")),
-        menuItem("Source Code", icon = icon("file-code-o"), 
-                 href = "https://github.com/sta523-fa20/project-same")
+                 icon = icon("list-ul"))
       )
     ),
     dashboardBody(
+      tags$style(type="text/css", "
+/*    Move everything below the header */
+    .content-wrapper {
+        margin-top: 50px;
+    }
+    .content {
+        padding-top: 60px;
+    }
+/*    Format the title/subtitle text */
+    .title-box {
+        position: absolute;
+        text-align: center;
+        top: 50%;
+        left: 50%;
+        transform:translate(-50%, -50%);
+    }
+    @media (max-width: 590px) {
+        .title-box {
+            position: absolute;
+            text-align: center;
+            top: 10%;
+            left: 10%;
+            transform:translate(-5%, -5%);
+        }
+    }
+    @media (max-width: 767px) {
+        .primary-title {
+            font-size: 1.1em;
+        }
+        .primary-subtitle {
+            font-size: 1em;
+        }
+    }
+/*    Make the image taller */
+    .main-header .logo {
+        height: 145px;
+    }
+/*    Override the default media-specific settings */
+    @media (max-width: 5000px) {
+        .main-header {
+            padding: 0 0;
+            position: relative;
+        }
+        .main-header .logo,
+        .main-header .navbar {
+            width: 100%;
+            float: none;
+        }
+        .main-header .navbar {
+            margin: 0;
+        }
+        .main-header .navbar-custom-menu {
+            float: right;
+        }
+    }
+/*    Move the sidebar down */
+    .main-sidebar {
+        position: absolute;
+    }
+    .left-side, .main-sidebar {
+        padding-top: 205px;
+    }"
+      ),
       ### apply theme
       shinyDashboardThemes(theme = "blue_gradient"),
       tabItems(
@@ -102,7 +185,8 @@ ui <- fluidPage(
         # find a park tab
         tabItem(tabName = "findpark",
                 fluidRow(width = 12, align = "center",
-                         valueBox("Not sure which national park to visit first?", 
+                    
+                         valueBox(tags$p("Not sure which national park to visit first?", style = "font-size: 85%;"), 
                         "Let us make a recommendation! We'll try to match you to a park you might like, even if it doesn't exactly match all of your preferences", 
                         icon = icon("tree"), color = "teal", width = 12)
                         ),
@@ -190,7 +274,6 @@ ui <- fluidPage(
                 uiOutput("distanceBox"),
                 # valuebox showing total duration
                 uiOutput("durationBox"),
-                # another valuebox showing weather maybe?
                 
                 # output map
                 leafletOutput("map")
@@ -198,46 +281,75 @@ ui <- fluidPage(
         
         # playlist parks
         tabItem(tabName = "playlist_park", 
+                fluidRow(width = 12, align = "center",
+                         
+                         valueBox(tags$p("Need the perfect playlist for your adventure?", style = "font-size: 70%;"), 
+                                  "Choose a National Park to see a curated Spotify playlist courtesy of Parks Project!", 
+                                  icon = icon("guitar"), color = "teal", width = 12)
+                ),
                 fluidRow(
-                box(width = 8, status = "primary", 
-                    selectInput(inputId = "parkdest_playlist", 
-                                label = "Choose Park Destination:",
-                                choices = c("Acadia National Park" = "117MQyf7iOjLaUVN7zcJw6", 
-                                            "Arches National Park" = "0kGeNA9vutRnoispZLvWOA", 
-                                            "Channel Islands National Park" = "5bpuJAPKK6SXG1Helc1TsB", 
-                                            "Glacier National Park" = "3WUcsMCdeFJgYEinv2MiYS", 
-                                            "Grand Teton National Park" = "51KaBvMKCEmlc1bwPd0Amb",
-                                            "Great Smoky Mountains National Park" = "70g2uez7L1UavQ6jCuV5Ps", 
-                                            "Joshua Tree National Park" = "5LrXMXO5HSsVLVrqU4PouM", 
-                                            "Mount Rainier National Park" = "1tiTFQFTMLuS1GOR2gMxK4", 
-                                            "Olympic National Park" = "7pv5aJWeY3jYBmmFx5uOXz", 
-                                            "Rocky Mountain National Park" = "44cvJuJMnUUyRcP519QzXs", 
-                                            "Sequoia and Kings Canyon National Park" = "6lIqG5vA4WEuqYjelgn8iV",
-                                            "Shenandoah National Park" = "2TDsIDS7fHYNSOlkaF16Dh",
-                                            "Yellowstone National Park" = "4X43PiVJL1cGwxYnioeyHU", 
-                                            "Yosemite National Park" = "4Te6Eha65DlRTwfO5O8iJD", 
-                                            "Zion National Park" = "5HIMOLC7zwxmy2C3NJJcXc")
-                    ))
-                    ), 
-                fluidRow(
-                  box(width = 8,htmlOutput("picture"))),
-                fluidRow(
-                  box(htmlOutput("play")))
-
+                  column(width = 4, align = "center",
+                         box(width = NULL, status = "primary", 
+                             selectInput(inputId = "parkdest_playlist", 
+                                         label = "Choose Park Destination:",
+                                         choices = c("Acadia National Park" = "117MQyf7iOjLaUVN7zcJw6", 
+                                                     "Arches National Park" = "0kGeNA9vutRnoispZLvWOA", 
+                                                     "Channel Islands National Park" = "5bpuJAPKK6SXG1Helc1TsB", 
+                                                     "Glacier National Park" = "3WUcsMCdeFJgYEinv2MiYS", 
+                                                     "Grand Teton National Park" = "51KaBvMKCEmlc1bwPd0Amb",
+                                                     "Great Smoky Mountains National Park" = "70g2uez7L1UavQ6jCuV5Ps", 
+                                                     "Joshua Tree National Park" = "5LrXMXO5HSsVLVrqU4PouM", 
+                                                     "Mount Rainier National Park" = "1tiTFQFTMLuS1GOR2gMxK4", 
+                                                     "Olympic National Park" = "7pv5aJWeY3jYBmmFx5uOXz", 
+                                                     "Rocky Mountain National Park" = "44cvJuJMnUUyRcP519QzXs", 
+                                                     "Sequoia and Kings Canyon National Park" = "6lIqG5vA4WEuqYjelgn8iV",
+                                                     "Shenandoah National Park" = "2TDsIDS7fHYNSOlkaF16Dh",
+                                                     "Yellowstone National Park" = "4X43PiVJL1cGwxYnioeyHU", 
+                                                     "Yosemite National Park" = "4Te6Eha65DlRTwfO5O8iJD", 
+                                                     "Zion National Park" = "5HIMOLC7zwxmy2C3NJJcXc")
+                                         ),
+                             htmlOutput("picture"), 
+                             br(),
+                             tags$img(src = "MyImage.jpg", width = "30%", align = "left")
+                             )
+                         ),
+                  column(width = 8, align = "center",
+                         htmlOutput("play"))
+                    )
                 ),
         
         # playlist genre
         tabItem(tabName = "playlist_genre",
-                box(width = 3, status = "primary", 
-                    selectInput(inputId = "genre", 
-                                label = "Choose Genres (Up to 5)",
-                                choices = c("acoustic", "alternative", "chill",
-                                            "classical", "dance", "edm", "funk", 
-                                            "grunge", "hip-hop", "holidays", 
-                                            "indie", "jazz", "kids", "k-pop", 
-                                            "pop", "punk", "r-n-b", "rock", 
-                                            "soul", "world-music"), 
-                                multiple = TRUE)
+                fluidRow(width = 12, align = "center",
+                         
+                         valueBox(tags$p("Need the perfect playlist for your adventure?", style = "font-size: 70%;"),
+                                  "Choose your favorite music genre for our recommendation!", 
+                                  icon = icon("guitar"), color = "teal", width = 12)
+                ),
+                fluidRow(
+                  column(width = 4, align = "center", 
+                         box(width = NULL, status = "primary", 
+                             selectInput(inputId = "genre", 
+                                         label = "Choose Genre", 
+                                         choices = c("Pop" = "pop", 
+                                                     "Rock" = "rock", 
+                                                     "Party" = "party", 
+                                                     "Chill" = "chill", 
+                                                     "Hip hop" = "hiphop", 
+                                                     "EDM" = "edm_dance", 
+                                                     "Jazz" = "jazz", 
+                                                     "R&B" = "rnb", 
+                                                     "Country" = "country", 
+                                                     "Latin" = "latin",
+                                                     "Holidays" = "holidays", 
+                                                     "Indie / Alternative" = "indie_alt")), 
+                             htmlOutput("picture_genre"),
+                             br(),
+                             tags$img(src = "MyImage.jpg", width = "30%", align = "left")
+                             )
+                         ), 
+                  column(width = 8, align = "center", 
+                         htmlOutput("playlist_genre"))
                 )
                 ),
         
@@ -416,11 +528,9 @@ server <- function(input, output) {
   output$picture<-renderText(picture()$Image)
   
   output$play <- renderUI({
-    tags$iframe(src='https://open.spotify.com/embed/playlist/6lIqG5vA4WEuqYjelgn8iV', width='300', height='380', frameborder='0', allowtransparency='true', allow='encrypted-media')
-    })
-  
-    
-    ### "<iframe src='https://open.spotify.com/embed/playlist/6lIqG5vA4WEuqYjelgn8iV' width='300' height='380' frameborder='0' allowtransparency='true' allow='encrypted-media'></iframe>")
+    url <- str_c("https://open.spotify.com/embed/playlist/", input$parkdest_playlist)
+    HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
+  })
   
 # ----------------------------------------------------------------------------------------------------
   # output info about recommended park in tabBox
@@ -596,6 +706,34 @@ server <- function(input, output) {
         addMarkers(lng = park_long, lat = park_lat)
     }
   })
+  
+  # Get playlist_genre ID
+  playlist_id_genre <- eventReactive(input$genre, {
+    get_category_playlists(category_id = input$genre, limit = 50) %>%
+      sample_n(1) %>%
+      select(id) %>%
+      unlist()
+  })
+
+  
+  # create picture of album art
+  picture_genre <- reactive({
+    get_playlist_cover_image(
+      playlist_id_genre()) %>%
+      select(url) %>%
+      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))
+  })
+  
+  output$picture_genre <- renderText(picture_genre()$Image)
+  
+  # output playlist for specified genre
+  output$playlist_genre <- renderUI({
+    url <- str_c("https://open.spotify.com/embed/playlist/", playlist_id_genre())
+    HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
+  })
+
+  output$apptitle <- renderText("NP Roadtripper")
+  
 }
 
 # run the application 

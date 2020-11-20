@@ -1,0 +1,70 @@
+---
+title: "Final Project Report: NP Roadtripper"
+author: "Team SAME: Sarah Mansfield, Aasha Reddy, Mady Beckner, Emre Yurtbay"
+date: "11/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Main Objective
+
+With COVID-19 still preventing air travel, road trips are seeing an increase in
+popularity. The goal of our app is to help in the road trip planning process. 
+Our app starts by recommending a national park to travel to based on user inputs
+and a random forest model. Users are then able to plan their routes by inputting
+their starting point address or landmark, and choosing their destination park. 
+Users might also like to let the app suggest a playlist for their drive, either
+by park or by genre. Finally, our app is able to recommend a packing list for 
+the user based on certain inputs, such as time of year and trip duration. We
+will elaborate on the contents of each tab in the Methods section of this 
+report. 
+
+## Tab Detail
+
+### User Guide
+The User Guide tab simply outlines how to use and navigate the app. We include 
+links to the APIs that are used in the app, including the NPS API, Openroute 
+Service API, and the Spotify Web Api. 
+
+
+
+
+
+### Find a Park 
+
+
+
+
+
+### Plan Your Trip
+
+
+
+
+
+### Roadtrip Playlist (by Park and by Genre)
+Our app contains two tabs that generate a playlist for the user, `Playlist by Park`, and `Playlist by Genre`. To create both of these playlists, we use the Spotify Web API which returns data on spotify music, artists, albums, and tracks from the Spotify Data Catalogue. We also make use of the `spotifyr` library created by github user charlie68. This library contains wrapper functions for the Spotify Web Api and allows us to directly access playlists, tracks, and album art. 
+
+The Playlist by Genre tab allows the user to choose from a list of genres and will display a playlist based on that input. Once the user inputs the genre, we use the spotifyr library function `get_category_playlists` to scrape a list of playlists for the given genre input. This returns a dataframe of spotify-created playlists for the given genre. We randomly sample a playlist from this dataframe and obtain the playlists's ID, which we can then use to embed the given playlist into our webpage. Within the app.R script, we embed the playlist into our Shiny app in the Server Function portion of our app by building the url "https://open.spotify.com/embed/playlist/[playlistID]" and using the HTML() function to embed it on our page. 
+We are also able to add album art to our page. Each spotify playlist has an associated "cover" image, which we pull using the `get_playlist_cover_image` function. This provides a url which we can embed onto our page.
+
+The Playlist by Park tab works in a similar way. This tab allows the user to choose from a list of National Parks and will display a playlist based on that input. The methods are the same as those described for the Playlist by Genre tab. However, the playlists sourced are created by Spotify artist Parks Project. We note that not all National Parks have a playlist available.
+
+
+### Camping Packing List
+
+
+
+
+
+## References
+
+[National Park API](https://www.nps.gov/subjects/digital/nps-data-api.htm),
+[Openroute Service API](https://openrouteservice.org/dev/#/api-docs),
+[Guide to using the ORS API in R](https://giscience.github.io/openrouteservice-r/articles/openrouteservice.html),
+[Custom Shiny Widgets](http://shinyapps.dreamrs.fr/shinyWidgets/),
+[Guide to using Leaflet in R](https://rstudio.github.io/leaflet/)
+[Embedding a Spotify playlist](https://developer.spotify.com/documentation/widgets/generate/embed/)
