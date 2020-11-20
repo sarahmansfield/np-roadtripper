@@ -20,6 +20,7 @@ ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key
 source("parkinfo.R")
 source("mapdirections.R")
 source("playlist.R")
+source("playlist_parks.R")
 
 # user interface
 ui <- fluidPage(
@@ -165,9 +166,9 @@ ui <- fluidPage(
                                             "Indiana Dunes National Park", "Isle Royale National Park", "Joshua Tree National Park", "Kenai Fjords National Park",
                                             "Kobuk Valley National Park", "Lassen Volcanic National Park", "Mammoth Cave National Park", "Mesa Verde National Park",
                                             "Mount Rainier National Park", "North Cascades National Park", "Olympic National Park", "Petrified Forest National Park",
-                                            "Pinnacles National Park", "Rocky Mountain National Park", "Saguaro National Park", "Shenandoah National Park",
-                                            "Theodore Roosevelt National Park", "Voyageurs National Park", "White Sands National Park", "Wind Cave National Park",
-                                            "Yellowstone National Park", "Yosemite National Park", "Zion National Park")),
+                                            "Pinnacles National Park", "Rocky Mountain National Park", "Saguaro National Park", "Sequoia & Kings Canyon National Parks", 
+                                            "Shenandoah National Park", "Theodore Roosevelt National Park", "Voyageurs National Park", "White Sands National Park", 
+                                            "Wind Cave National Park", "Yellowstone National Park", "Yosemite National Park", "Zion National Park")),
                     div(style = "display:inline-block", width = 6,
                         actionButton(inputId = "getdirections", 
                                      label = strong("Map Your Route"),
@@ -197,25 +198,32 @@ ui <- fluidPage(
         
         # playlist parks
         tabItem(tabName = "playlist_park", 
-                box(width = 3, status = "primary", 
+                fluidRow(
+                box(width = 8, status = "primary", 
                     selectInput(inputId = "parkdest_playlist", 
-                                label = "Choose Park Destination",
-                                choices = c("Acadia National Park", "Arches National Park", "Badlands National Park", "Big Bend National Park",
-                                            "Biscayne National Park", "Black Canyon Of The Gunnison National Park", "Bryce Canyon National Park", 
-                                            "Canyonlands National Park", "Capitol Reef National Park", "Carlsbad Caverns National Park",
-                                            "Channel Islands National Park", "Congaree National Park", "Crater Lake National Park", 
-                                            "Cuyahoga Valley National Park", "Death Valley National Park", "Everglades National Park",
-                                            "Gateway Arch National Park", "Glacier National Park", "Grand Canyon National Park", "Grand Teton National Park",
-                                            "Great Basin National Park", "Great Smoky Mountains National Park", "Guadalupe Mountains National Park",
-                                            "Haleakala National Park", "Hawai'i Volcanoes National Park", "Hot Springs National Park",
-                                            "Indiana Dunes National Park", "Isle Royale National Park", "Joshua Tree National Park", "Kenai Fjords National Park",
-                                            "Kobuk Valley National Park", "Lassen Volcanic National Park", "Mammoth Cave National Park", "Mesa Verde National Park",
-                                            "Mount Rainier National Park", "North Cascades National Park", "Olympic National Park", "Petrified Forest National Park",
-                                            "Pinnacles National Park", "Rocky Mountain National Park", "Saguaro National Park", "Sequoia & Kings Canyon National Parks", 
-                                            "Shenandoah National Park", "Theodore Roosevelt National Park", "Voyageurs National Park", "White Sands National Park", 
-                                            "Wind Cave National Park", "Yellowstone National Park", "Yosemite National Park", "Zion National Park")
-                    )
-                    )
+                                label = "Choose Park Destination:",
+                                choices = c("Acadia National Park" = "117MQyf7iOjLaUVN7zcJw6", 
+                                            "Arches National Park" = "0kGeNA9vutRnoispZLvWOA", 
+                                            "Channel Islands National Park" = "5bpuJAPKK6SXG1Helc1TsB", 
+                                            "Glacier National Park" = "3WUcsMCdeFJgYEinv2MiYS", 
+                                            "Grand Teton National Park" = "51KaBvMKCEmlc1bwPd0Amb",
+                                            "Great Smoky Mountains National Park" = "70g2uez7L1UavQ6jCuV5Ps", 
+                                            "Joshua Tree National Park" = "5LrXMXO5HSsVLVrqU4PouM", 
+                                            "Mount Rainier National Park" = "1tiTFQFTMLuS1GOR2gMxK4", 
+                                            "Olympic National Park" = "7pv5aJWeY3jYBmmFx5uOXz", 
+                                            "Rocky Mountain National Park" = "44cvJuJMnUUyRcP519QzXs", 
+                                            "Sequoia and Kings Canyon National Park" = "6lIqG5vA4WEuqYjelgn8iV",
+                                            "Shenandoah National Park" = "2TDsIDS7fHYNSOlkaF16Dh",
+                                            "Yellowstone National Park" = "4X43PiVJL1cGwxYnioeyHU", 
+                                            "Yosemite National Park" = "4Te6Eha65DlRTwfO5O8iJD", 
+                                            "Zion National Park" = "5HIMOLC7zwxmy2C3NJJcXc")
+                    ))
+                    ), 
+                fluidRow(
+                  box(width = 8,htmlOutput("picture"))),
+                fluidRow(
+                  box(htmlOutput("play")))
+
                 ),
         
         # playlist genre
@@ -381,6 +389,31 @@ server <- function(input, output) {
       tbl[, col_order]
     }
   })
+# --------------------------------------------------------------------------------------------------  
+  # Mady working
+  data <- eventReactive(input$parkdest_playlist, {
+    get_parks_project_songs(
+      playlistID = input$parkdest_playlist) }
+  )
+  
+  # Mady working 2
+  picture <- eventReactive(input$parkdest_playlist, {
+    get_playlist_cover_image(
+      input$parkdest_playlist) %>%
+      select(url) %>%
+      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
+  )
+  
+  output$picture<-renderText(picture()$Image)
+  
+  output$play <- renderUI({
+    tags$iframe(src='https://open.spotify.com/embed/playlist/6lIqG5vA4WEuqYjelgn8iV', width='300', height='380', frameborder='0', allowtransparency='true', allow='encrypted-media')
+    })
+  
+    
+    ### "<iframe src='https://open.spotify.com/embed/playlist/6lIqG5vA4WEuqYjelgn8iV' width='300' height='380' frameborder='0' allowtransparency='true' allow='encrypted-media'></iframe>")
+  
+# ----------------------------------------------------------------------------------------------------
   # output info about recommended park in tabBox
   output$parkinfobox <- renderUI({
     if (!is.null(recData())) {
