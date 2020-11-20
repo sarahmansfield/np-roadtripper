@@ -46,6 +46,27 @@ parks[51, "longitude"] <- -113.00340; parks[51, "latitude"] <- 37.18258   #zion
 parks <- parks %>%
   filter(!(parkname %in% c("Dry Tortugas National Park", "Virgin Islands National Park")))
 
+# add sequoia np
+sequoia <- fromJSON(url) %>%
+  as_tibble() %>%
+  flatten() %>%
+  as_tibble() %>%
+  filter(data.designation == "National Parks") %>%
+  select(-c(total, limit, start, data.id, data.latLong, data.entrancePasses,
+            data.fees, data.addresses, data.name, data.designation, 
+            data.contacts.phoneNumbers, data.contacts.emailAddresses)) %>%
+  rename(url = data.url, parkname = data.fullName, code = data.parkCode,
+         parkdesc = data.description, latitude = data.latitude,
+         longitude = data.longitude, activities = data.activities,
+         topics = data.topics, state = data.states, fees = data.entranceFees,
+         directioninfo = data.directionsInfo, directionurl = data.directionsUrl,
+         hours = data.operatingHours, images = data.images, 
+         weatherinfo = data.weatherInfo) %>%
+  mutate(longitude = as.numeric(longitude),
+         latitude = as.numeric(latitude))
+parks <- rbind(parks, sequoia)
+parks[50, "longitude"] <- -118.84118 ; parks[50, "latitude"] <- 36.48589
+
 # save general parks dataset
 saveRDS(parks, "data/parks.rds")
 
@@ -99,7 +120,7 @@ parkfeatures$bestseason <- c("Fall", "Spring", "Fall", "Spring", "Winter",
                              "Summer", "Summer", "Spring", "Fall", "Spring",
                              "Summer", "Spring", "Spring", "Fall",
                              "Fall", "Spring", "Summer", "Spring", "Summer",
-                             "Spring")
+                             "Spring", "Spring")
 
 # save this dataset
 saveRDS(parkfeatures, "data/parkfeatures.rds")
