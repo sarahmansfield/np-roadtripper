@@ -15,8 +15,9 @@ library(DT)
 library(spotifyr)
 library(lubridate)
 library(knitr)
+library(httr)
 library(remotes)
-remotes::install_github("GIScience/openrouteservice-r")
+#remotes::install_github("GIScience/openrouteservice-r")
 library(openrouteservice)
 ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key for openroute service api
 
@@ -29,16 +30,18 @@ source("playlist_parks.R")
 
 # user interface
 ui <- fluidPage(
+  title = "National Park Roadtripper",
   
   # change header font
   tags$head(
     tags$style(HTML("
       @import url('//fonts.googleapis.com/css?family=Lobster|Cabin:400,700');
       
-      .main-header .logo {
+      #apptitle {
       font-family: 'Lobster', cursive;
       font-weight: bold;
-      font-size: 24px;
+      font-size: 30px;
+      text-align: center;
       }
       
     "))
@@ -68,6 +71,8 @@ ui <- fluidPage(
                     )),
     dashboardSidebar(
       sidebarMenu(id = "sidebar",
+        textOutput("apptitle"),
+        br(),
         menuItem("User Guide", tabName = "userguide", 
                  icon = icon("book-open")),
         menuItem("Find a Park", tabName = "findpark", 
@@ -81,9 +86,7 @@ ui <- fluidPage(
                  menuSubItem("Playlist by Genre",
                              tabName = "playlist_genre")),
         menuItem("Camping Packing List", tabName = "packing", 
-                 icon = icon("newspaper")),
-        menuItem("Source Code", icon = icon("file-code-o"), 
-                 href = "https://github.com/sta523-fa20/project-same")
+                 icon = icon("list-ul"))
       )
     ),
     dashboardBody(
@@ -278,6 +281,12 @@ ui <- fluidPage(
         
         # playlist parks
         tabItem(tabName = "playlist_park", 
+                fluidRow(width = 12, align = "center",
+                         
+                         valueBox("Need the perfect playlist for your adventure?", 
+                                  "Choose a National Park to see a curated Spotify playlist courtesy of Parks Project!", 
+                                  icon = icon("guitar"), color = "teal", width = 12)
+                ),
                 fluidRow(
                   column(width = 4, align = "center",
                          box(width = NULL, status = "primary", 
@@ -309,15 +318,29 @@ ui <- fluidPage(
         
         # playlist genre
         tabItem(tabName = "playlist_genre",
+                fluidRow(width = 12, align = "center",
+                         
+                         valueBox("Need the perfect playlist for your adventure? ",
+                                  "Choose your favorite music genre for our recommendation!", 
+                                  icon = icon("guitar"), color = "teal", width = 12)
+                ),
                 fluidRow(
                   column(width = 4, align = "center", 
                          box(width = NULL, status = "primary", 
                              selectInput(inputId = "genre", 
                                          label = "Choose Genre", 
-                                         choices = c("pop", "rock", "party", "chill", 
-                                                     "hiphop", "edm_dance", "jazz", 
-                                                     "rnb", "country", "latin",
-                                                     "holidays", "indie_alt")), 
+                                         choices = c("Pop" = "pop", 
+                                                     "Rock" = "rock", 
+                                                     "Party" = "party", 
+                                                     "Chill" = "chill", 
+                                                     "Hip hop" = "hiphop", 
+                                                     "EDM" = "edm_dance", 
+                                                     "Jazz" = "jazz", 
+                                                     "R&B" = "rnb", 
+                                                     "Country" = "country", 
+                                                     "Latin" = "latin",
+                                                     "Holidays" = "holidays", 
+                                                     "Indie / Alternative" = "indie_alt")), 
                              htmlOutput("picture_genre")
                              )
                          ), 
@@ -705,6 +728,11 @@ server <- function(input, output) {
     HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
   })
 
+<<<<<<< HEAD
+=======
+  output$apptitle <- renderText("NP Roadtripper")
+  
+>>>>>>> origin/master
 }
 
 # run the application 
