@@ -368,14 +368,14 @@ server <- function(input, output) {
     if (!is.null(recData())) {
       recData()$activities[[1]] %>% 
         select(name) %>% 
-        rename(`Activities Offered` = name)
+        dplyr::rename(`Activities Offered` = name)
     }
   })
   # table of hours
   output$hours_tbl <- renderTable({
     if (!is.null(recData())) {
       tbl <- recData()$hours[[1]]$standardHours[1,] %>%
-        rename(Monday = monday,
+        dplyr::rename(Monday = monday,
                Tuesday = tuesday,
                Wednesday = wednesday,
                Thursday = thursday,
@@ -391,7 +391,7 @@ server <- function(input, output) {
   output$fees_tbl <- renderTable({
     if (!is.null(recData())) {
       tbl <- recData()$fees[[1]] %>%
-        rename(Type = title, 
+        dplyr::rename(Type = title, 
                Description = description, 
                Cost = cost)
       col_order <- c("Type", "Cost", "Description")
