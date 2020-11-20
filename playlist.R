@@ -61,15 +61,16 @@ playlist <- function(genres, trip_time) {
 
 
 
-g <- c("k-pop", "pop", "punk")
-x <- playlist(g, trip_time)
-
-
-recs <- get_recommendations(limit = 100, seed_genres = c("k-pop", 
-                                                        "pop", 
-                                                        "punk")) 
-
-artist <- map(recs$artists, `[[`, "name") %>% unlist()
+# 
+# g <- c("k-pop", "pop", "punk")
+# x <- playlist(g, trip_time)
+# 
+# 
+# recs <- get_recommendations(limit = 100, seed_genres = c("k-pop", 
+#                                                         "pop", 
+#                                                         "punk")) 
+# 
+# artist <- map(recs$artists, `[[`, "name") %>% unlist()
 
 
 
