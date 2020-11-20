@@ -186,7 +186,7 @@ ui <- fluidPage(
         tabItem(tabName = "findpark",
                 fluidRow(width = 12, align = "center",
                     
-                         valueBox("Not sure which national park to visit first?", 
+                         valueBox(tags$p("Not sure which national park to visit first?", style = "font-size: 85%;"), 
                         "Let us make a recommendation! We'll try to match you to a park you might like, even if it doesn't exactly match all of your preferences", 
                         icon = icon("tree"), color = "teal", width = 12)
                         ),
@@ -283,7 +283,7 @@ ui <- fluidPage(
         tabItem(tabName = "playlist_park", 
                 fluidRow(width = 12, align = "center",
                          
-                         valueBox("Need the perfect playlist for your adventure?", 
+                         valueBox(tags$p("Need the perfect playlist for your adventure?", style = "font-size: 70%;"), 
                                   "Choose a National Park to see a curated Spotify playlist courtesy of Parks Project!", 
                                   icon = icon("guitar"), color = "teal", width = 12)
                 ),
@@ -320,7 +320,7 @@ ui <- fluidPage(
         tabItem(tabName = "playlist_genre",
                 fluidRow(width = 12, align = "center",
                          
-                         valueBox("Need the perfect playlist for your adventure? ",
+                         valueBox(tags$p("Need the perfect playlist for your adventure?", style = "font-size: 70%;"),
                                   "Choose your favorite music genre for our recommendation!", 
                                   icon = icon("guitar"), color = "teal", width = 12)
                 ),
