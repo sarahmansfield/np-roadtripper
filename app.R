@@ -261,7 +261,7 @@ ui <- fluidPage(
                                 choices = c("Ya we are glamping", "No we want to do real camping!")),
                     div(style = "display:inline-block", width = 6,
                         actionButton(inputId = "getList", 
-                                     label = strong("Get Your Camping Packing List")
+                                     label = strong("Get Your Packing List")
                         )
                     ),
                     div(style = "display:inline-block",
