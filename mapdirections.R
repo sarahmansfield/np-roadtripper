@@ -38,7 +38,7 @@ get_steps <- function(directions) {
   name <- map_chr(steps, `[[`, "name")
   
   directions.df <- tibble(instruction, distance, duration, name) %>%
-    rename(Direction = instruction, 
+    dplyr::rename(Direction = instruction, 
            `Distance (mi)` = distance,
            `Duration (min)` = duration,
            Road = name)
