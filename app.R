@@ -308,7 +308,9 @@ ui <- fluidPage(
                                                      "Yosemite National Park" = "4Te6Eha65DlRTwfO5O8iJD", 
                                                      "Zion National Park" = "5HIMOLC7zwxmy2C3NJJcXc")
                                          ),
-                             htmlOutput("picture")
+                             htmlOutput("picture"), 
+                             br(),
+                             tags$img(src = "MyImage.jpg", width = "30%", align = "left")
                              )
                          ),
                   column(width = 8, align = "center",
@@ -341,7 +343,9 @@ ui <- fluidPage(
                                                      "Latin" = "latin",
                                                      "Holidays" = "holidays", 
                                                      "Indie / Alternative" = "indie_alt")), 
-                             htmlOutput("picture_genre")
+                             htmlOutput("picture_genre"),
+                             br(),
+                             tags$img(src = "MyImage.jpg", width = "30%", align = "left")
                              )
                          ), 
                   column(width = 8, align = "center", 
