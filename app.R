@@ -231,24 +231,22 @@ ui <- fluidPage(
         tabItem(tabName = "playlist_genre",
                 box(width = 8, status = "primary", 
                     selectInput(inputId = "genre", 
-                                label = "Choose Genres (Up to 5)",
-                                choices = c("acoustic", "alternative", "chill",
-                                            "classical", "dance", "edm", "funk", 
-                                            "grunge", "hip-hop", "holidays", 
-                                            "indie", "jazz", "kids", "k-pop", 
-                                            "pop", "punk", "r-n-b", "rock", 
-                                            "soul", "world-music"), 
+                                label = "Choose Genre",
+                                choices = c("pop", "rock", "party", "chill", 
+                                            "hiphop", "edm_dance", "jazz", 
+                                            "rnb", "country", "latin",
+                                            "holidays", "indie_alt"), 
                                 multiple = TRUE), 
                     div(align = "right", 
                         actionButton(inputId = "get_playlist_genre", 
-                                     label = strong("Preview Playlist")))
+                                     label = strong("Get Playlist")))
                 ), 
                 fluidRow(
                   box(width = 8, htmlOutput("picture_genre"))
                 ), 
                 fluidRow(
                   box(width = 10, 
-                      DT::dataTableOutput(outputId = "playlist_genre_table"
+                      htmlOutput("playlist_genre"
                   ))
                 )
                 ),
@@ -607,28 +605,27 @@ server <- function(input, output) {
     }
   })
   
-  # pull playlist_genre data (Aasha)
-  playlist_genre_data <- eventReactive(input$get_playlist_genre, {
-    get_playlist_genre(genres = input$genre)
+  # Mady working
+  data <- eventReactive(input$parkdest_playlist, {
+    get_parks_project_songs(
+      playlistID = input$parkdest_playlist) }
+  )
+  
+  # Mady working 2
+  picture_genre <- eventReactive(input$genre, {
+    get_playlist_cover_image(
+      input$parkdest_playlist) %>%
+      select(url) %>%
+      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
+  )
+  
+  output$picture<-renderText(picture()$Image)
+  
+  output$play <- renderUI({
+    url <- str_c("https://open.spotify.com/embed/playlist/", input$parkdest_playlist)
+    HTML(paste0('<iframe src="', url,'" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
   })
   
-  # create playlist_genre data (Aasha)
-  playlist_genre <- reactive({
-    playlist_genre <- playlist_genre_data() %>%
-      select(name, artist_name, album.name)
-  })
-  
-  # output image of first album in data
-  
-  output$picture_genre <- renderText(str_c("<img src='", 
-                                           playlist_genre_data()$album.images[[1]]$url[1],
-                                           "' height = '300'></img"))
-
-  # output playlist_genre preview datatable (Aasha)
-  output$playlist_genre_table <- DT::renderDataTable({
-    datatable(playlist_genre(), 
-              )
-  })
 
   
 }
