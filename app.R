@@ -189,8 +189,42 @@ ui <- fluidPage(
                 leafletOutput("map")
                 ),
         
-        # playlist tab
-        tabItem(tabName = "playlist"
+        # playlist parks
+        tabItem(tabName = "playlist_park", 
+                box(width = 3, status = "primary", 
+                    selectInput(inputId = "parkdest_playlist", 
+                                label = "Choose Park Destination",
+                                choices = c("Acadia National Park", "Arches National Park", "Badlands National Park", "Big Bend National Park",
+                                            "Biscayne National Park", "Black Canyon Of The Gunnison National Park", "Bryce Canyon National Park", 
+                                            "Canyonlands National Park", "Capitol Reef National Park", "Carlsbad Caverns National Park",
+                                            "Channel Islands National Park", "Congaree National Park", "Crater Lake National Park", 
+                                            "Cuyahoga Valley National Park", "Death Valley National Park", "Everglades National Park",
+                                            "Gateway Arch National Park", "Glacier National Park", "Grand Canyon National Park", "Grand Teton National Park",
+                                            "Great Basin National Park", "Great Smoky Mountains National Park", "Guadalupe Mountains National Park",
+                                            "Haleakala National Park", "Hawai'i Volcanoes National Park", "Hot Springs National Park",
+                                            "Indiana Dunes National Park", "Isle Royale National Park", "Joshua Tree National Park", "Kenai Fjords National Park",
+                                            "Kobuk Valley National Park", "Lassen Volcanic National Park", "Mammoth Cave National Park", "Mesa Verde National Park",
+                                            "Mount Rainier National Park", "North Cascades National Park", "Olympic National Park", "Petrified Forest National Park",
+                                            "Pinnacles National Park", "Rocky Mountain National Park", "Saguaro National Park", "Shenandoah National Park",
+                                            "Theodore Roosevelt National Park", "Voyageurs National Park", "White Sands National Park", "Wind Cave National Park",
+                                            "Yellowstone National Park", "Yosemite National Park", "Zion National Park")
+                    )
+                    )
+                ),
+        
+        # playlist genre
+        tabItem(tabName = "playlist_genre",
+                box(width = 3, status = "primary", 
+                    selectInput(inputId = "genre", 
+                                label = "Choose Genres (Up to 5)",
+                                choices = c("acoustic", "alternative", "chill",
+                                            "classical", "dance", "edm", "funk", 
+                                            "grunge", "hip-hop", "holidays", 
+                                            "indie", "jazz", "kids", "k-pop", 
+                                            "pop", "punk", "r-n-b", "rock", 
+                                            "soul", "world-music"), 
+                                multiple = TRUE)
+                )
                 ),
         
         # articles tab
