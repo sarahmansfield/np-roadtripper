@@ -57,7 +57,11 @@ ui <- fluidPage(
         menuItem("Plan Your Trip", tabName = "directions", 
                  icon = icon("map-marked-alt")),
         menuItem("Roadtrip Playlist", tabName = "playlist", 
-                 icon = icon("music")),
+                 icon = icon("music"), 
+                 menuSubItem("Playlist by Park", 
+                             tabName = "playlist_park"), 
+                 menuSubItem("Playlist by Genre",
+                             tabName = "playlist_genre")),
         menuItem("National Park News", tabName = "articles", 
                  icon = icon("newspaper")),
         menuItem("Source Code", icon = icon("file-code-o"), 
@@ -186,7 +190,8 @@ ui <- fluidPage(
                 ),
         
         # playlist tab
-        tabItem(tabName = "playlist"),
+        tabItem(tabName = "playlist"
+                ),
         
         # articles tab
         tabItem(tabName = "articles")
