@@ -29,6 +29,7 @@ source("playlist_parks.R")
 
 # user interface
 ui <- fluidPage(
+  title = "National Park Roadtripper",
   
   # change header font
   tags$head(
