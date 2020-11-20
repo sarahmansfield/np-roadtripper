@@ -704,10 +704,7 @@ server <- function(input, output) {
     url <- str_c("https://open.spotify.com/embed/playlist/", playlist_id_genre())
     HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
   })
-  
-  
 
-  
 }
 
 # run the application 
