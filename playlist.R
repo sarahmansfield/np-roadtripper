@@ -104,8 +104,8 @@ playlist_id <- get_my_playlists() %>%
 
 #https://api.spotify.com/v1/playlists/{playlist_id}/tracks
 
-url = str_c("https://api.spotify.com/v1/playlists/", playlist_id, "/tracks?", 
-            "uris=", track_uris)
+url = paste0("https://api.spotify.com/v1/playlists/", playlist_id, "/tracks?",
+            "uris=", "spotify:track:5n2BIbMpa2j2CHsOcsFG5V,spotify:track:0C71NJD4BhvPopTwI7a8KV")
 
 p <- content(GET(url = sprintf(url),
                  config = add_headers(authorization = authorization.header)))
