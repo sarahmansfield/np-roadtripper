@@ -78,11 +78,11 @@ ui <- fluidPage(
                   column(12, align = "center",
                          h2(strong("Welcome to the National Park Roadtrip Planner!")),
                          br(),
-                         h5("Imagine you need a break. Life can be hard, so you decide to take a vacation. But 
+                         h4("Imagine you need a break. Life can be hard, so you decide to take a vacation. But 
                          where should you go? International travel can be stressful, expensive, and difficult. Perhaps
                          you're even scared of planes. What should you do? Well, we have the answer for you! Take a 
-                         road trip to one of over 60 of America's beautiful national parks!
-                         Planning road trips can be time consuming, but we can help make it easier-
+                         road trip to one of 50 of America's beautiful national parks!
+                         Planning road trips can be time consuming, but we can help make it easier -
                             Welcome to the National Park Roadtripper app! "),
                          tags$div(
                            "Created using the ",
@@ -211,9 +211,9 @@ ui <- fluidPage(
                                             "Indiana Dunes National Park", "Isle Royale National Park", "Joshua Tree National Park", "Kenai Fjords National Park",
                                             "Kobuk Valley National Park", "Lassen Volcanic National Park", "Mammoth Cave National Park", "Mesa Verde National Park",
                                             "Mount Rainier National Park", "North Cascades National Park", "Olympic National Park", "Petrified Forest National Park",
-                                            "Pinnacles National Park", "Rocky Mountain National Park", "Saguaro National Park", "Shenandoah National Park",
-                                            "Theodore Roosevelt National Park", "Voyageurs National Park", "White Sands National Park", "Wind Cave National Park",
-                                            "Yellowstone National Park", "Yosemite National Park", "Zion National Park")
+                                            "Pinnacles National Park", "Rocky Mountain National Park", "Saguaro National Park", "Sequoia & Kings Canyon National Parks", 
+                                            "Shenandoah National Park", "Theodore Roosevelt National Park", "Voyageurs National Park", "White Sands National Park", 
+                                            "Wind Cave National Park", "Yellowstone National Park", "Yosemite National Park", "Zion National Park")
                     )
                     )
                 ),
