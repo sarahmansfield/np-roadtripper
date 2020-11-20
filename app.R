@@ -62,7 +62,7 @@ ui <- fluidPage(
                              tabName = "playlist_park"), 
                  menuSubItem("Playlist by Genre",
                              tabName = "playlist_genre")),
-        menuItem("National Park News", tabName = "articles", 
+        menuItem("Camping Packing List", tabName = "packing", 
                  icon = icon("newspaper")),
         menuItem("Source Code", icon = icon("file-code-o"), 
                  href = "https://github.com/sta523-fa20/project-same")
