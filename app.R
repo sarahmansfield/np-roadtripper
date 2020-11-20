@@ -57,8 +57,9 @@ ui <- fluidPage(
     dashboardHeader(#title = "NP Roadtripper"
                     titleWidth='100%',
                     title = shiny::span(
-                      tags$img(src="https://www.travelyosemite.com/media/820617/adobestock_196063806_1000x500.jpg", width = '40%', align = "left"),
-                      tags$img(src="https://www.nps.gov/common/uploads/banner_image/imr/homepage/0047D4F0-1DD8-B71B-0B56566586F793FA.jpg", width = '60%', align = "right")
+                      tags$img(src="https://www.travelyosemite.com/media/820617/adobestock_196063806_1000x500.jpg", width = "34%", align = "left"),
+                      tags$img(src="https://media.deseretdigital.com/file/fdd8867843?type=jpeg&quality=55&c=15&a=4379240d", width = '34%', align = "center"),
+                      tags$img(src="https://www.yellowstonepark.com/.image/t_share/MTUxMzk3NjQ1MjMzOTU2MDk1/teton-bison_andrecostantini_700.jpg", width = '32%', align = "right")
                    #   column(12, class="title-box", 
                    #          tags$h1(class="primary-title", style='margin-top:10px;', 'National Park Roadtripper!')
                     
@@ -121,7 +122,7 @@ ui <- fluidPage(
     }
 /*    Make the image taller */
     .main-header .logo {
-        height: 125px;
+        height: 145px;
     }
 /*    Override the default media-specific settings */
     @media (max-width: 5000px) {
@@ -146,7 +147,7 @@ ui <- fluidPage(
         position: absolute;
     }
     .left-side, .main-sidebar {
-        padding-top: 175px;
+        padding-top: 205px;
     }"
       ),
       ### apply theme
