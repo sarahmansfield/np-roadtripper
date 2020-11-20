@@ -728,11 +728,8 @@ server <- function(input, output) {
     HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
   })
 
-<<<<<<< HEAD
-=======
   output$apptitle <- renderText("NP Roadtripper")
   
->>>>>>> origin/master
 }
 
 # run the application 
