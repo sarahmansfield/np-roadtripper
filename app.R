@@ -234,7 +234,7 @@ ui <- fluidPage(
                 ),
         
         # Packing List tab
-        tabItem(tabName = "articles", 
+        tabItem(tabName = "packing", 
                 box(width = 4, status = "primary",
                     selectInput(inputId = "season",
                               label = "What time of year are you camping?",
@@ -256,7 +256,8 @@ ui <- fluidPage(
                                          )
                         )
                     )
-                ))
+                )
+              )
         )
       )
     )
