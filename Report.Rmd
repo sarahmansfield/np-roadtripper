@@ -1,0 +1,39 @@
+---
+title: "Final Project Report: NP Roadtripper"
+author: "Team SAME: Sarah Mansfield, Aasha Reddy, Mady Beckner, Emre Yurtbay"
+date: "11/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Main Objective
+
+
+
+
+## Data
+
+
+
+
+## Methods
+
+
+
+
+## Results
+
+
+
+
+## References
+
+[National Park API](https://www.nps.gov/subjects/digital/nps-data-api.htm),
+[Openroute Service API](https://openrouteservice.org/dev/#/api-docs),
+[Guide to using the ORS API in R](https://giscience.github.io/openrouteservice-r/articles/openrouteservice.html),
+[Custom Shiny Widgets](http://shinyapps.dreamrs.fr/shinyWidgets/),
+[Guide to using Leaflet in R](https://rstudio.github.io/leaflet/)
+[Embedding a Spotify playlist](https://developer.spotify.com/documentation/widgets/generate/embed/)
