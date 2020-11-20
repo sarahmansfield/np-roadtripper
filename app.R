@@ -12,6 +12,9 @@ library(geosphere)
 library(randomForest)
 library(leaflet)
 library(DT)
+library(spotifyr)
+library(lubridate)
+library(knitr)
 library(remotes)
 remotes::install_github("GIScience/openrouteservice-r")
 library(openrouteservice)
@@ -23,8 +26,10 @@ source("mapdirections.R")
 source("playlist.R")
 source("playlist_parks.R")
 
+
 # user interface
 ui <- fluidPage(
+  
   # change header font
   tags$head(
     tags$style(HTML("
@@ -49,7 +54,17 @@ ui <- fluidPage(
   ),
   
   dashboardPage(
-    dashboardHeader(title = "NP Roadtripper"),
+    dashboardHeader(#title = "NP Roadtripper"
+                    titleWidth='100%',
+                    title = shiny::span(
+                      tags$img(src="https://www.travelyosemite.com/media/820617/adobestock_196063806_1000x500.jpg", width = '40%', align = "left"),
+                      tags$img(src="https://www.nps.gov/common/uploads/banner_image/imr/homepage/0047D4F0-1DD8-B71B-0B56566586F793FA.jpg", width = '60%', align = "right")
+                   #   column(12, class="title-box", 
+                   #          tags$h1(class="primary-title", style='margin-top:10px;', 'National Park Roadtripper!')
+                    
+                 #  https://www.usnews.com/dims4/USNEWS/c780ac6/2147483647/resize/1200x%3E/quality/85/?url=http%3A%2F%2Fmedia.beam.usnews.com%2F02%2F5a%2F9f703dee4990843b40902de4c617%2Fyosemite2-getty-loic-lagarde.jpg
+                    
+                    )),
     dashboardSidebar(
       sidebarMenu(id = "sidebar",
         menuItem("User Guide", tabName = "userguide", 
@@ -71,6 +86,69 @@ ui <- fluidPage(
       )
     ),
     dashboardBody(
+      tags$style(type="text/css", "
+/*    Move everything below the header */
+    .content-wrapper {
+        margin-top: 50px;
+    }
+    .content {
+        padding-top: 60px;
+    }
+/*    Format the title/subtitle text */
+    .title-box {
+        position: absolute;
+        text-align: center;
+        top: 50%;
+        left: 50%;
+        transform:translate(-50%, -50%);
+    }
+    @media (max-width: 590px) {
+        .title-box {
+            position: absolute;
+            text-align: center;
+            top: 10%;
+            left: 10%;
+            transform:translate(-5%, -5%);
+        }
+    }
+    @media (max-width: 767px) {
+        .primary-title {
+            font-size: 1.1em;
+        }
+        .primary-subtitle {
+            font-size: 1em;
+        }
+    }
+/*    Make the image taller */
+    .main-header .logo {
+        height: 125px;
+    }
+/*    Override the default media-specific settings */
+    @media (max-width: 5000px) {
+        .main-header {
+            padding: 0 0;
+            position: relative;
+        }
+        .main-header .logo,
+        .main-header .navbar {
+            width: 100%;
+            float: none;
+        }
+        .main-header .navbar {
+            margin: 0;
+        }
+        .main-header .navbar-custom-menu {
+            float: right;
+        }
+    }
+/*    Move the sidebar down */
+    .main-sidebar {
+        position: absolute;
+    }
+    .left-side, .main-sidebar {
+        padding-top: 175px;
+    }"
+      ),
       ### apply theme
       shinyDashboardThemes(theme = "blue_gradient"),
       tabItems(
@@ -103,6 +181,7 @@ ui <- fluidPage(
         # find a park tab
         tabItem(tabName = "findpark",
                 fluidRow(width = 12, align = "center",
+                    
                          valueBox("Not sure which national park to visit first?", 
                         "Let us make a recommendation! We'll try to match you to a park you might like, even if it doesn't exactly match all of your preferences", 
                         icon = icon("tree"), color = "teal", width = 12)
