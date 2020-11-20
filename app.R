@@ -30,6 +30,7 @@ source("playlist_parks.R")
 
 # user interface
 ui <- fluidPage(
+  title = "National Park Roadtripper",
   
   # change header font
   tags$head(
@@ -311,25 +312,20 @@ ui <- fluidPage(
         
         # playlist genre
         tabItem(tabName = "playlist_genre",
-                box(width = 8, status = "primary", 
-                    selectInput(inputId = "genre", 
-                                label = "Choose Genre",
-                                choices = c("pop", "rock", "party", "chill", 
-                                            "hiphop", "edm_dance", "jazz", 
-                                            "rnb", "country", "latin",
-                                            "holidays", "indie_alt"), 
-                                multiple = TRUE), 
-                    div(align = "right", 
-                        actionButton(inputId = "get_playlist_genre", 
-                                     label = strong("Get Playlist")))
-                ), 
                 fluidRow(
-                  box(width = 8, htmlOutput("picture_genre"))
-                ), 
-                fluidRow(
-                  box(width = 10, 
-                      htmlOutput("playlist_genre"
-                  ))
+                  column(width = 4, align = "center", 
+                         box(width = NULL, status = "primary", 
+                             selectInput(inputId = "genre", 
+                                         label = "Choose Genre", 
+                                         choices = c("pop", "rock", "party", "chill", 
+                                                     "hiphop", "edm_dance", "jazz", 
+                                                     "rnb", "country", "latin",
+                                                     "holidays", "indie_alt")), 
+                             htmlOutput("picture_genre")
+                             )
+                         ), 
+                  column(width = 8, align = "center", 
+                         htmlOutput("playlist_genre"))
                 )
                 ),
         
@@ -509,7 +505,7 @@ server <- function(input, output) {
   
   output$play <- renderUI({
     url <- str_c("https://open.spotify.com/embed/playlist/", input$parkdest_playlist)
-    HTML(paste0('<iframe src="', url,'" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
+    HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
   })
   
 # ----------------------------------------------------------------------------------------------------
@@ -687,28 +683,37 @@ server <- function(input, output) {
     }
   })
   
-  # Mady working
-  data <- eventReactive(input$parkdest_playlist, {
-    get_parks_project_songs(
-      playlistID = input$parkdest_playlist) }
-  )
+  # Get playlist_genre ID
+  playlist_id_genre <- eventReactive(input$genre, {
+    get_category_playlists(category_id = input$genre, limit = 50) %>%
+      sample_n(1) %>%
+      select(id) %>%
+      unlist()
+  })
+
   
-  # Mady working 2
-  picture_genre <- eventReactive(input$genre, {
+  # create picture of album art
+  picture_genre <- reactive({
     get_playlist_cover_image(
-      input$parkdest_playlist) %>%
+      playlist_id_genre()) %>%
       select(url) %>%
-      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
-  )
-  
-  output$picture<-renderText(picture()$Image)
-  
-  output$play <- renderUI({
-    url <- str_c("https://open.spotify.com/embed/playlist/", input$parkdest_playlist)
-    HTML(paste0('<iframe src="', url,'" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
+      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))
   })
   
+  output$picture_genre <- renderText(picture_genre()$Image)
+  
+  # output playlist for specified genre
+  output$playlist_genre <- renderUI({
+    url <- str_c("https://open.spotify.com/embed/playlist/", playlist_id_genre())
+    HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
+  })
+  
+<<<<<<< HEAD
   output$apptitle <- renderText("NP Roadtripper")
+=======
+  
+
+>>>>>>> ce866740e82ab23a2bcb0c8293f2e92b9d28b7c6
   
 }
 
