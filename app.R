@@ -6,8 +6,6 @@ library(shinyalert)
 library(tidyverse)
 library(purrr)
 library(jsonlite)
-library(cowplot)
-library(magick)
 library(geosphere)
 library(randomForest)
 library(leaflet)
@@ -173,20 +171,40 @@ ui <- fluidPage(
                          you're even scared of planes. What should you do? Well, we have the answer for you! Take a 
                          road trip to one of 50 of America's beautiful national parks!
                          Planning road trips can be time consuming, but we can help make it easier -
-                            Welcome to the National Park Roadtripper app! ")
+                            Welcome to the National Park Roadtripper app! "),
+                         tags$div(
+                           "Created using the ",
+                           tags$a(href="https://www.nps.gov/subjects/developer/index.htm", "NPS API,"),
+                           tags$a(href="https://openrouteservice.org/", "Openroute Service API,"),
+                           "and the ",
+                           tags$a(href="https://developer.spotify.com/documentation/web-api/", "Spotify Web API")
+                         ),
+                         hr(),
+                         h3(strong("How to use the app:")),
+                         br()
                   )),
-                fluidRow(column(12, align = "center", 
-                                tags$div(
-                                  "Created using the ",
-                                  tags$a(href="https://www.nps.gov/subjects/developer/index.htm", "NPS API,"),
-                                  tags$a(href="https://openrouteservice.org/", "Openroute Service API,"),
-                                  "and the ",
-                                  tags$a(href="https://developer.spotify.com/documentation/web-api/", "Spotify Web API")
-                                ),
-                                hr(),
-                                h3(strong("How to use the app:")),
-                                h4(strong("Camping Packing List")),
-                                h5("We've all been there before. You meticulously planned your camping trip, making sure you have
+                fluidRow(
+                  column(6,
+                         box(title = tagList(icon("tree"), strong("Find a Park")), 
+                             width = NULL, solidHeader = TRUE, status = "primary",
+                             tags$p(h4("Description")))
+                         ),
+                  column(6, 
+                         box(title = tagList(icon("map-marked-alt"), strong("Plan Your Trip")), 
+                             width = NULL, solidHeader = TRUE, status = "primary",
+                             tags$p(h4("Description")))
+                         )
+                  ),
+                fluidRow(
+                  column(6,
+                         box(title = tagList(icon("music"), strong("Roadtrip Playlist")), 
+                             width = NULL, solidHeader = TRUE, status = "primary",
+                             tags$p(h4("Description")))
+                         ),
+                  column(6, 
+                         box(title = tagList(icon("list-ul"), strong("Camping Packing List")), 
+                             width = NULL, solidHeader = TRUE, status = "primary",
+                             tags$p(h4("We've all been there before. You meticulously planned your camping trip, making sure you have
                        absolutely everything you need. 4 hours into your drive, you realize you never
                        packed the tent! What do you do? Do you turn around? Sleep under the stars? Using our 
                        custom packing checklist, you never again have to worry about forgetting the camping essentials
@@ -195,9 +213,9 @@ ui <- fluidPage(
                        you do not have some of the necessities, we provided links for you to order the items
                        you may not have, along with an estimated price. Using this tool, the stress of 
                        packing for your camping trip will disappear forever, and you can focus on becoming 
-                       one with nature")
-                                
-                )
+                       one with nature."))
+                             )
+                         )
                 )),
         
         # find a park tab
@@ -468,38 +486,29 @@ server <- function(input, output) {
       )
     }
   })
-  # park image1
-  output$image1 <- renderPlot({
+  # park image
+  output$image1 <- renderText({
     if (!is.null(recData())) {
       imageurl <- recData()$images[[1]]$url[1]
-      ggdraw() + draw_image(imageurl)
+      str_c("<img src='", imageurl, "' width = '400'></img")
     }
   })
-  # park image2
-  output$image2 <- renderPlot({
+  output$image2 <- renderText({
     if (!is.null(recData())) {
-      if (nrow(recData()$images[[1]]) >= 2) {
-        imageurl <- recData()$images[[1]]$url[2]
-        ggdraw() + draw_image(imageurl)
-      }
+      imageurl <- recData()$images[[1]]$url[1]
+      str_c("<img src='", imageurl, "' width = '400'></img")
     }
   })
-  # park image3
-  output$image3 <- renderPlot({
+  output$image3 <- renderText({
     if (!is.null(recData())) {
-      if (nrow(recData()$images[[1]]) >= 3) {
-        imageurl <- recData()$images[[1]]$url[3]
-        ggdraw() + draw_image(imageurl)
-      }
+      imageurl <- recData()$images[[1]]$url[1]
+      str_c("<img src='", imageurl, "' width = '400'></img")
     }
   })
-  # park image4
-  output$image4 <- renderPlot({
+  output$image4 <- renderText({
     if (!is.null(recData())) {
-      if (nrow(recData()$images[[1]]) >= 4) {
-        imageurl <- recData()$images[[1]]$url[4]
-        ggdraw() + draw_image(imageurl)
-      }
+      imageurl <- recData()$images[[1]]$url[1]
+      str_c("<img src='", imageurl, "' width = '400'></img")
     }
   })
   # table of activities
@@ -573,8 +582,8 @@ server <- function(input, output) {
         id = "tabset1", width = 12, side = "right",
         tabPanel(title = tagList(shiny::icon("info"), "General Info"),
                  sidebarLayout(
-                   sidebarPanel(width = 7,
-                                plotOutput("image1")
+                   sidebarPanel(width = 7, align = "center",
+                                htmlOutput("image1")
                    ),
                    mainPanel(width = 5,
                              br(),
@@ -586,8 +595,8 @@ server <- function(input, output) {
         ),
         tabPanel(title = tagList(shiny::icon("hiking"), "Activities"),
                  sidebarLayout(
-                   sidebarPanel(width = 7,
-                                plotOutput("image2")
+                   sidebarPanel(width = 7, align = "center",
+                                htmlOutput("image2")
                    ),
                    mainPanel(width = 5, 
                              fluidRow(br(),
@@ -599,8 +608,8 @@ server <- function(input, output) {
         ),
         tabPanel(title = tagList(shiny::icon("clock"), "Hours"),
                  sidebarLayout(
-                   sidebarPanel(width = 7,
-                                plotOutput("image3")
+                   sidebarPanel(width = 7, align = "center",
+                                htmlOutput("image3")
                    ),
                    mainPanel(width = 5, 
                              fluidRow(br(),
@@ -614,8 +623,8 @@ server <- function(input, output) {
         ),
         tabPanel(title = tagList(shiny::icon("dollar-sign"), "Fees"),
                  sidebarLayout(
-                   sidebarPanel(width = 7,
-                                plotOutput("image4")
+                   sidebarPanel(width = 7, align = "center",
+                                htmlOutput("image4")
                    ),
                    mainPanel(width = 5, 
                              fluidRow(br(),
