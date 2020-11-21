@@ -58,35 +58,35 @@ ui <- fluidPage(
   
   dashboardPage(
     dashboardHeader(#title = "NP Roadtripper"
-                    titleWidth='100%',
-                    title = shiny::span(
-                      tags$img(src="https://www.travelyosemite.com/media/820617/adobestock_196063806_1000x500.jpg", width = "34%", align = "left"),
-                      tags$img(src="https://media.deseretdigital.com/file/fdd8867843?type=jpeg&quality=55&c=15&a=4379240d", width = '34%', align = "center"),
-                      tags$img(src="https://www.yellowstonepark.com/.image/t_share/MTUxMzk3NjQ1MjMzOTU2MDk1/teton-bison_andrecostantini_700.jpg", width = '32%', align = "right")
-                   #   column(12, class="title-box", 
-                   #          tags$h1(class="primary-title", style='margin-top:10px;', 'National Park Roadtripper!')
-                    
-                 #  https://www.usnews.com/dims4/USNEWS/c780ac6/2147483647/resize/1200x%3E/quality/85/?url=http%3A%2F%2Fmedia.beam.usnews.com%2F02%2F5a%2F9f703dee4990843b40902de4c617%2Fyosemite2-getty-loic-lagarde.jpg
-                    
-                    )),
+      titleWidth='100%',
+      title = shiny::span(
+        tags$img(src="https://www.travelyosemite.com/media/820617/adobestock_196063806_1000x500.jpg", width = "34%", align = "left"),
+        tags$img(src="https://media.deseretdigital.com/file/fdd8867843?type=jpeg&quality=55&c=15&a=4379240d", width = '34%', align = "center"),
+        tags$img(src="https://www.yellowstonepark.com/.image/t_share/MTUxMzk3NjQ1MjMzOTU2MDk1/teton-bison_andrecostantini_700.jpg", width = '32%', align = "right")
+        #   column(12, class="title-box", 
+        #          tags$h1(class="primary-title", style='margin-top:10px;', 'National Park Roadtripper!')
+        
+        #  https://www.usnews.com/dims4/USNEWS/c780ac6/2147483647/resize/1200x%3E/quality/85/?url=http%3A%2F%2Fmedia.beam.usnews.com%2F02%2F5a%2F9f703dee4990843b40902de4c617%2Fyosemite2-getty-loic-lagarde.jpg
+        
+      )),
     dashboardSidebar(
       sidebarMenu(id = "sidebar",
-        textOutput("apptitle"),
-        br(),
-        menuItem("User Guide", tabName = "userguide", 
-                 icon = icon("book-open")),
-        menuItem("Find a Park", tabName = "findpark", 
-                 icon = icon("tree")), 
-        menuItem("Plan Your Trip", tabName = "directions", 
-                 icon = icon("map-marked-alt")),
-        menuItem("Roadtrip Playlist", tabName = "playlist", 
-                 icon = icon("music"), 
-                 menuSubItem("Playlist by Park", 
-                             tabName = "playlist_park"), 
-                 menuSubItem("Playlist by Genre",
-                             tabName = "playlist_genre")),
-        menuItem("Camping Packing List", tabName = "packing", 
-                 icon = icon("list-ul"))
+                  textOutput("apptitle"),
+                  br(),
+                  menuItem("User Guide", tabName = "userguide", 
+                           icon = icon("book-open")),
+                  menuItem("Find a Park", tabName = "findpark", 
+                           icon = icon("tree")), 
+                  menuItem("Plan Your Trip", tabName = "directions", 
+                           icon = icon("map-marked-alt")),
+                  menuItem("Roadtrip Playlist", tabName = "playlist", 
+                           icon = icon("music"), 
+                           menuSubItem("Playlist by Park", 
+                                       tabName = "playlist_park"), 
+                           menuSubItem("Playlist by Genre",
+                                       tabName = "playlist_genre")),
+                  menuItem("Camping Packing List", tabName = "packing", 
+                           icon = icon("list-ul"))
       )
     ),
     dashboardBody(
@@ -166,27 +166,27 @@ ui <- fluidPage(
                          div(h2(("Welcome to the National Park Roadtrip Planner!")), style = "color:#1f78b4 ; border-bottom:3px solid #1f78b4")), 
                   column(2, align = "right", 
                          tags$img(src = "treefinal.png", width = "50%", align = "left"))),
-                  fluidRow(
-                    column(12, align = "center", 
-                           h4("Imagine you need a break. Life can be hard, so you decide to take a vacation. But 
+                fluidRow(
+                  column(12, align = "center", 
+                         h4("Imagine you need a break. Life can be hard, so you decide to take a vacation. But 
                          where should you go? International travel can be stressful, expensive, and difficult. Perhaps
                          you're even scared of planes. What should you do? Well, we have the answer for you! Take a 
                          road trip to one of 50 of America's beautiful national parks!
                          Planning road trips can be time consuming, but we can help make it easier -
-                            Welcome to the National Park Roadtripper app! "),
-                           )),
-                  fluidRow(column(12, align = "center", 
-                    tags$div(
-                      "Created using the ",
-                      tags$a(href="https://www.nps.gov/subjects/developer/index.htm", "NPS API,"),
-                      tags$a(href="https://openrouteservice.org/", "Openroute Service API,"),
-                      "and the ",
-                      tags$a(href="https://developer.spotify.com/documentation/web-api/", "Spotify Web API")
-                    ),
-                    hr(),
-                    h3(strong("How to use the app:")),
-                    h4(strong("Camping Packing List")),
-                    h5("We've all been there before. You meticulously planned your trip, making sure you have
+                            Welcome to the National Park Roadtripper app! ")
+                  )),
+                fluidRow(column(12, align = "center", 
+                                tags$div(
+                                  "Created using the ",
+                                  tags$a(href="https://www.nps.gov/subjects/developer/index.htm", "NPS API,"),
+                                  tags$a(href="https://openrouteservice.org/", "Openroute Service API,"),
+                                  "and the ",
+                                  tags$a(href="https://developer.spotify.com/documentation/web-api/", "Spotify Web API")
+                                ),
+                                hr(),
+                                h3(strong("How to use the app:")),
+                                h4(strong("Camping Packing List")),
+                                h5("We've all been there before. You meticulously planned your trip, making sure you have
                        absolutely everything you need, but 4 hours into your drive, you realize you never
                        pack the tent. What do you do? Do you turn around? Sleep under the stars? Using our 
                        custom packing checklist, you never again have to worry about forgetting the essentials
@@ -196,18 +196,18 @@ ui <- fluidPage(
                        you may not have, along with an estimated price. Using this tool, the stress of 
                        packing for your camping trip will disappear forever, and you can focus on becoming 
                        one with nature")
-                    
-                  )
-                         )),
+                                
+                )
+                )),
         
         # find a park tab
         tabItem(tabName = "findpark",
                 fluidRow(width = 12, align = "center",
-                    
+                         
                          valueBox(tags$p("Not sure which national park to visit first?", style = "font-size: 70%;"), 
-                        "Let us make a recommendation! We'll try to match you to a park you might like, even if it doesn't exactly match all of your preferences", 
-                        icon = icon("tree"), color = "teal", width = 12)
-                        ),
+                                  "Let us make a recommendation! We'll try to match you to a park you might like, even if it doesn't exactly match all of your preferences", 
+                                  icon = icon("tree"), color = "teal", width = 12)
+                ),
                 fluidRow(
                   column(width = 4,
                          box(width = NULL, status = "primary",
@@ -231,23 +231,23 @@ ui <- fluidPage(
                                             label = "Free (no entrance fee)",
                                             shape = "round", bigger = TRUE, status = "info",
                                             icon = icon("check"), animation = "jelly"
-                                            ),
+                             ),
                              div(align = "right",
                                  actionButton(inputId = "getrec", 
                                               label = strong("Find a Match"), 
                                               icon = icon("pagelines")
-                                              )
                                  )
                              )
-                         ),
+                         )
+                  ),
                   column(width = 8,
                          # output park rec banner
                          uiOutput("parkBox"),
                          # tab box w/info about recommended park
                          uiOutput("parkinfobox")
-                         )
                   )
-                ),
+                )
+        ),
         
         # directions tab
         tabItem(tabName = "directions",
@@ -275,18 +275,18 @@ ui <- fluidPage(
                         actionButton(inputId = "getdirections", 
                                      label = strong("Map Your Route"),
                                      icon = icon("compass")
-                                     )
-                        ),
+                        )
+                    ),
                     div(style = "display:inline-block",
                         conditionalPanel(condition = "input.getdirections > 0",
                                          # action button to get directions
                                          actionButton(inputId = "getsteps", 
                                                       label = strong("Directions"), 
                                                       icon = icon("route")
-                                                      )
                                          )
                         )
-                    ),
+                    )
+                ),
                 
                 # valuebox showing total distance
                 uiOutput("distanceBox"),
@@ -295,7 +295,7 @@ ui <- fluidPage(
                 
                 # output map
                 leafletOutput("map")
-                ),
+        ),
         
         # playlist parks
         tabItem(tabName = "playlist_park", 
@@ -325,16 +325,16 @@ ui <- fluidPage(
                                                      "Yellowstone National Park" = "4X43PiVJL1cGwxYnioeyHU", 
                                                      "Yosemite National Park" = "4Te6Eha65DlRTwfO5O8iJD", 
                                                      "Zion National Park" = "5HIMOLC7zwxmy2C3NJJcXc")
-                                         ),
+                             ),
                              htmlOutput("picture"), 
                              br(),
                              tags$img(src = "MyImage.jpg", width = "30%", align = "left")
-                             )
-                         ),
+                         )
+                  ),
                   column(width = 8, align = "center",
                          htmlOutput("play"))
-                    )
-                ),
+                )
+        ),
         
         # playlist genre
         tabItem(tabName = "playlist_genre",
@@ -364,12 +364,12 @@ ui <- fluidPage(
                              htmlOutput("picture_genre"),
                              br(),
                              tags$img(src = "MyImage.jpg", width = "30%", align = "left")
-                             )
-                         ), 
+                         )
+                  ), 
                   column(width = 8, align = "center", 
                          htmlOutput("playlist_genre"))
                 )
-                ),
+        ),
         
         # Packing List tab
         tabItem(tabName = "packing", 
@@ -379,31 +379,12 @@ ui <- fluidPage(
                                   "Never forget the camping essentials using our checklist tool!", 
                                   icon = icon("tree"), color = "teal", width = 12)
                 ),
-<<<<<<< HEAD
-                box(width = 4, status = "primary",
-                    selectInput(inputId = "toy",
-                              label = "What time of year are you camping?",
-                              choices = c("Between April and August", 
-                                          "Between September and March!")),
-                    selectInput(inputId = "cooking",
-                                label = "Do you plan on cooking while you camp?:",
-                                choices = c("Yes!", "No!")),
-                    selectInput(inputId = "glamping",
-                                label = "Let's Be Real: Is this a Glamping Trip or Not?",
-                                choices = c("No we want to do real camping!","Yeah, we are glamping")),
-                    selectInput(inputId = "bears",
-                                label = "Are you worried about bears?",
-                                choices = c("Obviously", "No (I really need to self reflect)")),
-                    div(style = "display:inline-block", width = 6,
-                        actionButton(inputId = "getList", 
-                                     label = strong("Get Your Packing List")
-                        )
-=======
                 fluidRow(
                   box(width = 4, status = "primary",
-                      selectInput(inputId = "packseason",
+                      selectInput(inputId = "toy",
                                   label = "What time of year are you camping?",
-                                  choices = c("April - August", "September - March (I'm brave!)")),
+                                  choices = c("Between April and August",
+                                              "Between September and March")),
                       selectInput(inputId = "cooking",
                                   label = "Do you plan on cooking while you camp?:",
                                   choices = c("Yes!", "No!")),
@@ -425,16 +406,15 @@ ui <- fluidPage(
                     column(
                       width = 12,
                       DT::dataTableOutput(outputId = "packlist")
->>>>>>> 31d152350f331c696e71ea63c6103fe159b69b0c
                     )
                   )
                 )
                 
-              )
         )
       )
     )
   )
+)
 
 # server function
 server <- function(input, output) {
@@ -465,7 +445,7 @@ server <- function(input, output) {
     
     parkfinal <- calcDistance(input$startloc)
     rec <- get_parkrec(parkdata = parkfinal, maxdistance = input$distance, activities = input$activities,
-                fee = as.numeric(input$fee), season = input$season)
+                       fee = as.numeric(input$fee), season = input$season)
     if (is.null(rec)) {
       shinyalert(title = "ERROR",
                  text  = "There are no national parks within the specified distance from your starting point. Please expand your search.",
@@ -487,7 +467,7 @@ server <- function(input, output) {
               href = url
       )
     }
-    })
+  })
   # park image1
   output$image1 <- renderPlot({
     if (!is.null(recData())) {
@@ -535,12 +515,12 @@ server <- function(input, output) {
     if (!is.null(recData())) {
       tbl <- recData()$hours[[1]]$standardHours[1,] %>%
         dplyr::rename(Monday = monday,
-               Tuesday = tuesday,
-               Wednesday = wednesday,
-               Thursday = thursday,
-               Friday = friday,
-               Saturday = saturday,
-               Sunday = sunday)
+                      Tuesday = tuesday,
+                      Wednesday = wednesday,
+                      Thursday = thursday,
+                      Friday = friday,
+                      Saturday = saturday,
+                      Sunday = sunday)
       col_order <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
       tbl[, col_order] %>%
         pivot_longer(cols = Monday:Sunday, names_to = "Day", values_to = "Hours")
@@ -551,13 +531,13 @@ server <- function(input, output) {
     if (!is.null(recData())) {
       tbl <- recData()$fees[[1]] %>%
         dplyr::rename(Type = title, 
-               Description = description, 
-               Cost = cost)
+                      Description = description, 
+                      Cost = cost)
       col_order <- c("Type", "Cost", "Description")
       tbl[, col_order]
     }
   })
-# --------------------------------------------------------------------------------------------------  
+  # --------------------------------------------------------------------------------------------------  
   # Mady working
   data <- eventReactive(input$parkdest_playlist, {
     get_parks_project_songs(
@@ -579,7 +559,7 @@ server <- function(input, output) {
     HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
   })
   
-# ----------------------------------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------------------------------
   # output info about recommended park in tabBox
   output$parkinfobox <- renderUI({
     if (!is.null(recData())) {
@@ -761,7 +741,7 @@ server <- function(input, output) {
       select(id) %>%
       unlist()
   })
-
+  
   
   # create picture of album art
   picture_genre <- reactive({
@@ -783,16 +763,13 @@ server <- function(input, output) {
   # Camping List
   pack_data <- eventReactive(input$getList, {
     full_table =  read_csv("data/packingitems.csv")
-    
-<<<<<<< HEAD
     always_on = full_table[1:15,]
-=======
-    if (input$packseason == "September - March (I'm brave)!"){
+    
+    if (input$toy == "Between September and March"){
       season_additional = full_table[20:22,]
     } else {
       season_additional = full_table[18:19,]
     }
->>>>>>> 31d152350f331c696e71ea63c6103fe159b69b0c
     
     if (input$cooking == "Yes!") {
       cooking_additional = full_table[23:27,]
@@ -812,20 +789,16 @@ server <- function(input, output) {
       bear_additional = NULL
     }
     
-    if (input$toy == "Between September and March!") {
-      s_add = full_table[20:22,]
-    } else {s_add = full_table[18:19,]}
-    
-    tibble(rbind(always_on, s_add, cooking_additional,
+    tibble(rbind(always_on, season_additional, cooking_additional,
                  glamp_additional, bear_additional)) %>%  mutate(
                    Buy = stringr::str_c("<a href='", Buy, "'>", Buy, "</a>")
                  )
-
+    
   })
   
   output$packlist <- DT::renderDataTable({
     DT::datatable(pack_data(),
-                  escape = F, rownames = F,
+                  escape = F, rownames = F
                   # caption = htmltools::tags$caption(
                   #   style = "caption-side: top; text-align: center; 
                   #   color:black; font-size:150% ;",
@@ -838,4 +811,3 @@ server <- function(input, output) {
 
 # run the application 
 shinyApp(ui = ui, server = server)
-
