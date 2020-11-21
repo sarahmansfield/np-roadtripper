@@ -184,7 +184,18 @@ ui <- fluidPage(
                       tags$a(href="https://developer.spotify.com/documentation/web-api/", "Spotify Web API")
                     ),
                     hr(),
-                    h3(strong("How to use the app:"))
+                    h3(strong("How to use the app:")),
+                    h4(strong("Camping Packing List")),
+                    h5("We've all been there before. You meticulously planned your trip, making sure you have
+                       absolutely everything you need, but 4 hours into your drive, you realize you never
+                       pack the tent. What do you do? Do you turn around? Sleep under the stars? Using our 
+                       custom packing checklist, you never again have to worry about forgetting the essentials
+                       at home for your trip. Just enter some information about your camping plans, and we 
+                       will provide you a list of the most important equipment for your trip. If you realize
+                       you do not have some of the necessities, we provided links for you to order the items
+                       you may not have, along with an estimated price. Using this tool, the stress of 
+                       packing for your camping trip will disappear forever, and you can focus on becoming 
+                       one with nature")
                     
                   )
                          )),
@@ -369,9 +380,10 @@ ui <- fluidPage(
                                   icon = icon("tree"), color = "teal", width = 12)
                 ),
                 box(width = 4, status = "primary",
-                    selectInput(inputId = "season",
+                    selectInput(inputId = "toy",
                               label = "What time of year are you camping?",
-                              choices = c("April - August", "Septmeber - March (I'm brave)!")),
+                              choices = c("Between April and August", 
+                                          "Between September and March!")),
                     selectInput(inputId = "cooking",
                                 label = "Do you plan on cooking while you camp?:",
                                 choices = c("Yes!", "No!")),
@@ -746,13 +758,8 @@ server <- function(input, output) {
   # Camping List
   pack_data <- eventReactive(input$getList, {
     full_table =  read_csv("data/packingitems.csv")
-    always_on = full_table[1:15,]
     
-    if (input$season == "Septmeber - March (I'm brave)!"){
-      season_additional = full_table[20:22,]
-    } else {
-      season_additional = full_table[18:19,]
-    }
+    always_on = full_table[1:15,]
     
     if (input$cooking == "Yes!") {
       cooking_additional = full_table[23:27,]
@@ -760,7 +767,7 @@ server <- function(input, output) {
       cooking_additional = NULL
     }
     
-    if (input$glamping == "Ya we are glamping") {
+    if (input$glamping == "Yeah, we are glamping") {
       glamp_additional = full_table[28:33,]
     } else{
       glamp_additional = NULL
@@ -772,7 +779,11 @@ server <- function(input, output) {
       bear_additional = NULL
     }
     
-    tibble(rbind(always_on, season_additional, 
+    if (input$toy == "Between September and March!") {
+      s_add = full_table[20:22,]
+    } else {s_add = full_table[18:19,]}
+    
+    tibble(rbind(always_on, s_add, cooking_additional,
                  glamp_additional, bear_additional)) %>%  mutate(
                    Buy = stringr::str_c("<a href='", Buy, "'>", Buy, "</a>")
                  )
@@ -794,5 +805,4 @@ server <- function(input, output) {
 
 # run the application 
 shinyApp(ui = ui, server = server)
-
 
