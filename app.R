@@ -169,7 +169,7 @@ ui <- fluidPage(
                          h4("Imagine you need a break. Life can be hard, so you decide to take a vacation. But 
                          where should you go? International travel can be stressful, expensive, and difficult. Perhaps
                          you're even scared of planes. What should you do? Well, we have the answer for you! Take a 
-                         road trip to one of 50 of America's beautiful national parks!
+                         road trip to one of America's beautiful national parks!
                          Planning road trips can be time consuming, but we can help make it easier -
                             Welcome to the National Park Roadtripper app! "),
                          tags$div(
