@@ -355,36 +355,37 @@ ui <- fluidPage(
         
         # Packing List tab
         tabItem(tabName = "packing", 
+                fluidRow(width = 12, align = "center",
+                         
+                         valueBox(tags$p("Camping Checklist for the Forgetful Traveller", style = "font-size: 70%;"), 
+                                  "Never forget the camping essentials using our checklist tool!", 
+                                  icon = icon("tree"), color = "teal", width = 12)
+                ),
                 box(width = 4, status = "primary",
                     selectInput(inputId = "season",
                               label = "What time of year are you camping?",
-                              choices = c("Winter!", "Spring", "Summer", "Autumn")),
+                              choices = c("April - August", "Septmeber - March (I'm brave)!")),
                     selectInput(inputId = "cooking",
                                 label = "Do you plan on cooking while you camp?:",
                                 choices = c("Yes!", "No!")),
-                    selectInput(inputId = "duration",
-                                label = "How Many Days do you plan to camp for? :",
-                                choices = c("1 night!", "2-4 Nights!", "Over 5 Nights")),
-                    selectInput(inputId = "snow",
-                                label = "Is there a chance of Snow during your trip? :",
-                                choices = c("No Chance", "It's Likely", "uhhh, I am not sure?")),
                     selectInput(inputId = "glamping",
                                 label = "Let's Be Real: Is this a Glamping Trip or Not?",
-                                choices = c("Ya we are glamping", "No we want to do real camping!")),
+                                choices = c("No we want to do real camping!","Yeah, we are glamping")),
+                    selectInput(inputId = "bears",
+                                label = "Are you worried about bears?",
+                                choices = c("Obviously", "No (I really need to self reflect)")),
                     div(style = "display:inline-block", width = 6,
                         actionButton(inputId = "getList", 
                                      label = strong("Get Your Packing List")
                         )
-                    ),
-                    div(style = "display:inline-block",
-                        conditionalPanel(condition = "input.getdirections > 0",
-                                         # action button to get directions
-                                         actionButton(inputId = "getsteps", 
-                                                      label = strong("Directions"), 
-                                                      icon = icon("route")
-                                         )
-                        )
                     )
+                ),
+                
+                mainPanel(
+                  column(
+                    width = 12,
+                    DT::dataTableOutput(outputId = "packlist")
+                  )
                 )
               )
         )
@@ -734,7 +735,57 @@ server <- function(input, output) {
 
   output$apptitle <- renderText("NP Roadtripper")
   
+  #############################################################################
+  # Camping List
+  pack_data <- eventReactive(input$getList, {
+    full_table =  read_csv("data/packingitems.csv")
+    always_on = full_table[1:15,]
+    
+    if (input$season == "Septmeber - March (I'm brave)!"){
+      season_additional = full_table[20:22,]
+    } else {
+      season_additional = full_table[18:19,]
+    }
+    
+    if (input$cooking == "Yes!") {
+      cooking_additional = full_table[23:27,]
+    } else{
+      cooking_additional = NULL
+    }
+    
+    if (input$glamping == "Ya we are glamping") {
+      glamp_additional = full_table[28:33,]
+    } else{
+      glamp_additional = NULL
+    }
+    
+    if (input$bears == "Obviously") {
+      bear_additional = full_table[16:17,]
+    } else{
+      bear_additional = NULL
+    }
+    
+    tibble(rbind(always_on, season_additional, 
+                 glamp_additional, bear_additional)) %>%  mutate(
+                   Buy = stringr::str_c("<a href='", Buy, "'>", Buy, "</a>")
+                 )
+
+  })
+  
+  output$packlist <- DT::renderDataTable({
+    DT::datatable(pack_data(),
+                  escape = F, rownames = F,
+                  # caption = htmltools::tags$caption(
+                  #   style = "caption-side: top; text-align: center; 
+                  #   color:black; font-size:150% ;",
+                  #   "Your Packing List!"
+                  # )
+    )
+  })
+  
 }
 
 # run the application 
 shinyApp(ui = ui, server = server)
+
+
