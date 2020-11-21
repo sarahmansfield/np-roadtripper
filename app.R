@@ -204,12 +204,12 @@ ui <- fluidPage(
         tabItem(tabName = "findpark",
                 fluidRow(width = 12, align = "center",
                     
-                         valueBox(tags$p("Not sure which national park to visit first?", style = "font-size: 85%;"), 
+                         valueBox(tags$p("Not sure which national park to visit first?", style = "font-size: 70%;"), 
                         "Let us make a recommendation! We'll try to match you to a park you might like, even if it doesn't exactly match all of your preferences", 
                         icon = icon("tree"), color = "teal", width = 12)
                         ),
                 fluidRow(
-                  column(width = 3,
+                  column(width = 4,
                          box(width = NULL, status = "primary",
                              textInput(inputId = "startloc",
                                        label = "Starting from:",
@@ -240,7 +240,7 @@ ui <- fluidPage(
                                  )
                              )
                          ),
-                  column(width = 9,
+                  column(width = 8,
                          # output park rec banner
                          uiOutput("parkBox"),
                          # tab box w/info about recommended park
@@ -379,6 +379,7 @@ ui <- fluidPage(
                                   "Never forget the camping essentials using our checklist tool!", 
                                   icon = icon("tree"), color = "teal", width = 12)
                 ),
+<<<<<<< HEAD
                 box(width = 4, status = "primary",
                     selectInput(inputId = "toy",
                               label = "What time of year are you camping?",
@@ -397,15 +398,38 @@ ui <- fluidPage(
                         actionButton(inputId = "getList", 
                                      label = strong("Get Your Packing List")
                         )
+=======
+                fluidRow(
+                  box(width = 4, status = "primary",
+                      selectInput(inputId = "packseason",
+                                  label = "What time of year are you camping?",
+                                  choices = c("April - August", "September - March (I'm brave!)")),
+                      selectInput(inputId = "cooking",
+                                  label = "Do you plan on cooking while you camp?:",
+                                  choices = c("Yes!", "No!")),
+                      selectInput(inputId = "glamping",
+                                  label = "Let's Be Real: Is this a Glamping Trip or Not?",
+                                  choices = c("No we want to do real camping!","Yeah, we are glamping")),
+                      selectInput(inputId = "bears",
+                                  label = "Are you worried about bears?",
+                                  choices = c("Obviously", "No (I really need to self reflect)")),
+                      div(align = "right",
+                          actionButton(inputId = "getList", 
+                                       label = strong("Get Your Packing List"), 
+                                       icon = icon("box")
+                          )
+                      )
+                  ),
+                  
+                  mainPanel(
+                    column(
+                      width = 12,
+                      DT::dataTableOutput(outputId = "packlist")
+>>>>>>> 31d152350f331c696e71ea63c6103fe159b69b0c
                     )
-                ),
-                
-                mainPanel(
-                  column(
-                    width = 12,
-                    DT::dataTableOutput(outputId = "packlist")
                   )
                 )
+                
               )
         )
       )
@@ -414,6 +438,9 @@ ui <- fluidPage(
 
 # server function
 server <- function(input, output) {
+  # sidebar title
+  output$apptitle <- renderText("NP Roadtripper")
+  
   # get park recommendation
   recData <- eventReactive(input$getrec, {
     # Create 0-row data frame which will be used to store data
@@ -751,15 +778,21 @@ server <- function(input, output) {
     url <- str_c("https://open.spotify.com/embed/playlist/", playlist_id_genre())
     HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
   })
-
-  output$apptitle <- renderText("NP Roadtripper")
   
   #############################################################################
   # Camping List
   pack_data <- eventReactive(input$getList, {
     full_table =  read_csv("data/packingitems.csv")
     
+<<<<<<< HEAD
     always_on = full_table[1:15,]
+=======
+    if (input$packseason == "September - March (I'm brave)!"){
+      season_additional = full_table[20:22,]
+    } else {
+      season_additional = full_table[18:19,]
+    }
+>>>>>>> 31d152350f331c696e71ea63c6103fe159b69b0c
     
     if (input$cooking == "Yes!") {
       cooking_additional = full_table[23:27,]
