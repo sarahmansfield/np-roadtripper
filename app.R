@@ -578,29 +578,7 @@ server <- function(input, output, session) {
       tbl[, col_order]
     }
   })
-  # --------------------------------------------------------------------------------------------------  
-  # Mady working
-  data <- eventReactive(input$parkdest_playlist, {
-    get_parks_project_songs(
-      playlistID = input$parkdest_playlist) }
-  )
-  
-  # Mady working 2
-  picture <- eventReactive(input$parkdest_playlist, {
-    get_playlist_cover_image(
-      input$parkdest_playlist) %>%
-      select(url) %>%
-      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
-  )
-  
-  output$picture<-renderText(picture()$Image)
-  
-  output$play <- renderUI({
-    url <- str_c("https://open.spotify.com/embed/playlist/", input$parkdest_playlist)
-    HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
-  })
-  
-  # ----------------------------------------------------------------------------------------------------
+
   # output info about recommended park in tabBox
   output$parkinfobox <- renderUI({
     if (!is.null(recData())) {
@@ -808,7 +786,28 @@ server <- function(input, output, session) {
   })
   
 # TAB 3.1 - PLAYLIST PARK
-  # move Mady's code here
+ 
+  # DELETE? - Mady working
+  data <- eventReactive(input$parkdest_playlist, {
+    get_parks_project_songs(
+      playlistID = input$parkdest_playlist) }
+  )
+
+  # create picture of album art
+  picture <- eventReactive(input$parkdest_playlist, {
+    get_playlist_cover_image(
+      input$parkdest_playlist) %>%
+      select(url) %>%
+      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
+  )
+  
+  output$picture<-renderText(picture()$Image)
+  
+  # output playlist for specified park 
+  output$play <- renderUI({
+    url <- str_c("https://open.spotify.com/embed/playlist/", input$parkdest_playlist)
+    HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
+  })
   
   
 # TAB 3.2 - PLAYLIST GENRE
