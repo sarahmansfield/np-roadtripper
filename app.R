@@ -186,12 +186,12 @@ ui <- fluidPage(
                                 hr(),
                                 h3(strong("How to use the app:")),
                                 h4(strong("Camping Packing List")),
-                                h5("We've all been there before. You meticulously planned your trip, making sure you have
-                       absolutely everything you need, but 4 hours into your drive, you realize you never
-                       pack the tent. What do you do? Do you turn around? Sleep under the stars? Using our 
-                       custom packing checklist, you never again have to worry about forgetting the essentials
-                       at home for your trip. Just enter some information about your camping plans, and we 
-                       will provide you a list of the most important equipment for your trip. If you realize
+                                h5("We've all been there before. You meticulously planned your camping trip, making sure you have
+                       absolutely everything you need. 4 hours into your drive, you realize you never
+                       packed the tent! What do you do? Do you turn around? Sleep under the stars? Using our 
+                       custom packing checklist, you never again have to worry about forgetting the camping essentials
+                       at home. Just enter some information about your overnight plans, and we 
+                       will provide you a list of the most important equipment for your adventure. If you realize
                        you do not have some of the necessities, we provided links for you to order the items
                        you may not have, along with an estimated price. Using this tool, the stress of 
                        packing for your camping trip will disappear forever, and you can focus on becoming 
