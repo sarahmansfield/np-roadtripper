@@ -187,19 +187,46 @@ ui <- fluidPage(
                   column(6,
                          box(title = tagList(icon("tree"), strong("Find a Park")), 
                              width = NULL, solidHeader = TRUE, status = "primary",
-                             tags$p(h4("Description")))
+                             tags$p(h4("The Find a Park tab will make a national park recommendation based 
+                                       on inputs including starting location, maximum travel distance, 
+                                       travel season, activities, and entrance fees. Our recommendation is 
+                                       based on a random forest algorithm that aims to recommend the perfect
+                                       park for your next trip! When inputting starting location, be sure to
+                                       include a full address (with or without zipcode) or a specific 
+                                       landmark (e.g. Duke University, or 1210 Chapel Drive, Durham NC). 
+                                       Entering just a zipcode for instance is not enough information. 
+                                       Additionally, we require an input for maximum travel distance and 
+                                       starting location. All other inputs are optional.  After choosing your 
+                                       inputs, the app will recommend a park and include important logistical 
+                                       information, including fees, hours of operation, activities, and
+                                       general park information. ")))
                          ),
                   column(6, 
                          box(title = tagList(icon("map-marked-alt"), strong("Plan Your Trip")), 
                              width = NULL, solidHeader = TRUE, status = "primary",
-                             tags$p(h4("Description")))
+                             tags$p(h4("Input your starting location and park destination, and our app will 
+                                       provide you with the best driving route. The app displays a map to show 
+                                       the exact route, as well as the total trip distance in miles, and the
+                                       total trip duration in hours. You will also be able to access step-by-step
+                                       directions after you choose your inputs. As with the Find a Park tab, the
+                                       starting location input will require a full address (with or without a 
+                                       zipcode) or a specific landmark (e.g. Duke University, or 1210 Chapel 
+                                       Drive, Durham NC). Entering just a zipcode for instance is not enough 
+                                       information. ")))
                          )
                   ),
                 fluidRow(
                   column(6,
                          box(title = tagList(icon("music"), strong("Roadtrip Playlist")), 
                              width = NULL, solidHeader = TRUE, status = "primary",
-                             tags$p(h4("Description")))
+                             tags$p(h4("Use the Roadtrip Playlist tab to get a curated playlist to fill your
+                                       drive. You can choose a playlist by genre or even by Park. Just input
+                                       your park destination, and our app will source a playlist from Spotify, 
+                                       created by the artist Parks Project. Input your favorite genre to get 
+                                       a random Spotify-created playlist from that genre. You can listen to 
+                                       the playlists right in our app, or you can click the Spotify logo on 
+                                       the playlist to open the playlist within Spotify. From there you can
+                                       save the playlist to your account. ")))
                          ),
                   column(6, 
                          box(title = tagList(icon("list-ul"), strong("Camping Packing List")), 
