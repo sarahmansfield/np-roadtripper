@@ -129,7 +129,27 @@ Project. We note that not all National Parks have a playlist available.
 
 ### Camping Packing List
 
-
+Since many people who are traveling
+to national parks may be interested in camping,
+we decided to add a camping essentials checklist to make the 
+process of packing easier and stress free.
+Even if your camping experience is only for one night, 
+remembering all of the essentials for the 
+trip can be difficult, and forgetting even just one thing can derail your 
+plans! To use this tool, the camper can input specific
+details about their camping plans, such as the time of year they are camping, 
+or whether or not they plan on cooking at the campsite, 
+and the tool will provide a 
+personalized list of 
+items the user should remember to pack. A certain list of essential items will
+always appear no matter what inputs the user provides (tent, sleeping bag,
+etc.), but the returned list will always be different depending on the user 
+inputs. If the user does not already own the item, the checklist also 
+makes it easy to buy something he or she may be missing. 
+An estimated price of each item is provided, along with a live 
+hyperlink to a website at which they can buy the item. For each item, we 
+also provide a priority score from "essential" to "low", which indicates 
+how important each item is for the trip.
 
 
 
