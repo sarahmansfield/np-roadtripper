@@ -462,9 +462,14 @@ ui <- fluidPage(
 )
 
 # server function
-server <- function(input, output) {
+server <- function(input, output, session) {
+  
+# TAB 0 - USER GUIDE
+  
   # sidebar title
   output$apptitle <- renderText("NP Roadtripper")
+  
+# TAB 1 - FIND A PARK 
   
   # get park recommendation
   recData <- eventReactive(input$getrec, {
@@ -664,6 +669,38 @@ server <- function(input, output) {
       )
     }
   })
+
+# TAB 2 - PLAN YOUR TRIP
+  
+  # use park rec from first tab in this tab
+  observeEvent(!is.null(recData()), {
+    updateSelectInput(session,
+                      inputId = "parkdest",
+                      label = "Destination:",
+                      choices = c("Acadia National Park", "Arches National Park", "Badlands National Park", "Big Bend National Park",
+                                  "Biscayne National Park", "Black Canyon Of The Gunnison National Park", "Bryce Canyon National Park",
+                                  "Canyonlands National Park", "Capitol Reef National Park", "Carlsbad Caverns National Park",
+                                  "Channel Islands National Park", "Congaree National Park", "Crater Lake National Park",
+                                  "Cuyahoga Valley National Park", "Death Valley National Park", "Everglades National Park",
+                                  "Gateway Arch National Park", "Glacier National Park", "Grand Canyon National Park", "Grand Teton National Park",
+                                  "Great Basin National Park", "Great Smoky Mountains National Park", "Guadalupe Mountains National Park",
+                                  "Haleakala National Park", "Hawai'i Volcanoes National Park", "Hot Springs National Park",
+                                  "Indiana Dunes National Park", "Isle Royale National Park", "Joshua Tree National Park", "Kenai Fjords National Park",
+                                  "Kobuk Valley National Park", "Lassen Volcanic National Park", "Mammoth Cave National Park", "Mesa Verde National Park",
+                                  "Mount Rainier National Park", "North Cascades National Park", "Olympic National Park", "Petrified Forest National Park",
+                                  "Pinnacles National Park", "Rocky Mountain National Park", "Saguaro National Park", "Sequoia & Kings Canyon National Parks",
+                                  "Shenandoah National Park", "Theodore Roosevelt National Park", "Voyageurs National Park", "White Sands National Park",
+                                  "Wind Cave National Park", "Yellowstone National Park", "Yosemite National Park", "Zion National Park"),
+                      selected = recData()$parkname)
+  })
+  
+  # update starting location input from Find a Park Tab
+  observeEvent(!is.null(input$startloc), {
+    updateTextInput(session, 
+                    inputId = "startlocmap", 
+                    label = "Starting From:", 
+                    value = input$startloc)
+  })
   
   # directions geoJSON object
   directobj <- eventReactive(input$getdirections, {
@@ -770,6 +807,12 @@ server <- function(input, output) {
     }
   })
   
+# TAB 3.1 - PLAYLIST PARK
+  # move Mady's code here
+  
+  
+# TAB 3.2 - PLAYLIST GENRE
+  
   # Get playlist_genre ID
   playlist_id_genre <- eventReactive(input$genre, {
     get_category_playlists(category_id = input$genre, limit = 50) %>%
@@ -794,8 +837,9 @@ server <- function(input, output) {
     url <- str_c("https://open.spotify.com/embed/playlist/", playlist_id_genre())
     HTML(paste0('<iframe src="', url,'" width="700" height="800" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'))
   })
+
+# TAB 4 - CAMPING PACKING LIST
   
-  #############################################################################
   # Camping List
   pack_data <- eventReactive(input$getList, {
     full_table =  read_csv("data/packingitems.csv")
