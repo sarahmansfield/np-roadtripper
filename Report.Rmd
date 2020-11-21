@@ -11,47 +11,120 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Main Objective
 
-With COVID-19 still preventing air travel, road trips are seeing an increase in
-popularity. The goal of our app is to help in the road trip planning process. 
-Our app starts by recommending a national park to travel to based on user inputs
-and a random forest model. Users are then able to plan their routes by inputting
-their starting point address or landmark, and choosing their destination park. 
-Users might also like to let the app suggest a playlist for their drive, either
-by park or by genre. Finally, our app is able to recommend a packing list for 
-the user based on certain inputs, such as time of year and trip duration. We
-will elaborate on the contents of each tab in the Methods section of this 
-report. 
+With COVID-19 still preventing air travel, road trips are seeing an increase 
+in popularity. The goal of our app is to help in the road trip planning 
+process. Our app starts by recommending a national park to travel to based on 
+user inputs and a random forest model. Users are then able to plan their routes 
+by inputting their starting point address or landmark, and choosing their 
+destination park. Users might also like to let the app suggest a playlist for 
+their drive, either by park or by genre. Finally, our app is able to recommend 
+a packing list for the user based on certain inputs, such as time of year and 
+trip duration. We will elaborate on the contents of each tab in the next 
+section of this report. 
 
-## Tab Detail
+
+## Tab Details
 
 ### User Guide
+
 The User Guide tab simply outlines how to use and navigate the app. We include 
 links to the APIs that are used in the app, including the NPS API, Openroute 
 Service API, and the Spotify Web Api. 
 
 
-
-
-
 ### Find a Park 
 
+The Find a Park tab makes a national park recommendation based on user inputs 
+such as the maximum distance the user wants to travel, which season they'll be 
+traveling, what activities they would like to do, and whether the park is free 
+(has no entrance fees) or not. The recommended park is outputted in a banner 
+that links to its website when clicked, and a tab box that details more 
+information about the park such as its general + weather description, 
+activities offered, hours, entrance fee(s), as well as park photos. If no parks 
+are found within the specified distance, the user is notified through a Shiny 
+alert.
 
+The recommendation is made based off of a random forest model trained off of a 
+dataset containing information about the various features pertaining to each 
+national park. The dataset is first filtered based on the maximum distance 
+specified by the user. The distance between the user's starting point and each 
+national park is calculated using the `calcDistance` function detailed in 
+`parkinfo.R`, which geocodes the starting point to retrieve its coordinates, 
+calculates the distance using the `distHaversine` function, and returns a new 
+dataframe with the distance variable. Based on the rest of the user inputs, 
+the `get_parkrec` function in `parkinfo.R` uses the random forest model to 
+match the user to a park that best matches their interests, even if it doesn't 
+exactly adhere to every one of their selections.
 
+The dataset used for the random forest model was created by submitting an API 
+call to the `parks` endpoint within the National Park Service API and 
+converting the resulting JSON object into a dataframe. We did some additional 
+data wrangling and cleaning to create binary indicator variables for a variety 
+of park activities, whether a park was free or not, as well as did some 
+additional research to add a variable indicating which season was best for 
+visiting a specific park. The longitude/latitude coordinates for some of the 
+parks also had to be changed manually in order to be compatible with the 
+Openroute Service API (which will be discussed in further detail in the next 
+tab section), and two of the parks were removed from the dataset due to being 
+inaccessible by land. This process is outlined within `parkdatasets.R`
 
 
 ### Plan Your Trip
 
+The Plan Your Trip Tab allows users to input their starting point and the 
+national park they wish to travel to, and outputs a map of their route, step 
+by step directions, as well as value boxes that show the duration of their 
+trip (in hours) and the total distance (in miles).
 
+This tab primarily used the Openroute Service (ORS) API to get a route and 
+directions between two points. Within `mapdirections.R`, the `get_route` 
+function geocodes the user's starting point to coordinates, pulls the 
+coordinates of the specified park from the park dataset, then used the ORS 
+API's directions function to return a geoJSON object containing route 
+information. Additionally, the function exits and returns null if the distance 
+between the two points exceeds 3000 miles, as the ORS API does not support 
+route distances greater than roughly 3700 miles (we set the cutoff at 3000 
+to ensure no errors). The user is notified through a Shiny alert and asked to 
+choose another park if this occurs. Next, we utilized `leaflet` to create a 
+map of the route returned by this function, and added markers indicating the 
+start point and the destination.
 
+Also within `mapdirections.R`, the `get_steps` function takes in the geoJSON 
+object from before and utilizes mapping functions to extract step by step 
+instructions of the route. These instructions are outputted in a table within 
+a modal popup window that activates when the user presses the Directions 
+button.
 
 
 ### Roadtrip Playlist (by Park and by Genre)
-Our app contains two tabs that generate a playlist for the user, `Playlist by Park`, and `Playlist by Genre`. To create both of these playlists, we use the Spotify Web API which returns data on spotify music, artists, albums, and tracks from the Spotify Data Catalogue. We also make use of the `spotifyr` library created by github user charlie68. This library contains wrapper functions for the Spotify Web Api and allows us to directly access playlists, tracks, and album art. 
 
-The Playlist by Genre tab allows the user to choose from a list of genres and will display a playlist based on that input. Once the user inputs the genre, we use the spotifyr library function `get_category_playlists` to scrape a list of playlists for the given genre input. This returns a dataframe of spotify-created playlists for the given genre. We randomly sample a playlist from this dataframe and obtain the playlists's ID, which we can then use to embed the given playlist into our webpage. Within the app.R script, we embed the playlist into our Shiny app in the Server Function portion of our app by building the url "https://open.spotify.com/embed/playlist/[playlistID]" and using the HTML() function to embed it on our page. 
-We are also able to add album art to our page. Each spotify playlist has an associated "cover" image, which we pull using the `get_playlist_cover_image` function. This provides a url which we can embed onto our page.
+Our app contains two tabs that generate a playlist for the user: 
+`Playlist by Park`, and `Playlist by Genre`. To create both of these playlists, 
+we use the Spotify Web API which returns data on spotify music, artists, 
+albums, and tracks from the Spotify Data Catalogue. We also make use of the 
+`spotifyr` library created by github user charlie68. This library contains 
+wrapper functions for the Spotify Web Api and allows us to directly access 
+playlists, tracks, and album art. 
 
-The Playlist by Park tab works in a similar way. This tab allows the user to choose from a list of National Parks and will display a playlist based on that input. The methods are the same as those described for the Playlist by Genre tab. However, the playlists sourced are created by Spotify artist Parks Project. We note that not all National Parks have a playlist available.
+The Playlist by Genre tab allows the user to choose from a list of genres and 
+will display a playlist based on that input. Once the user inputs the genre, 
+we use the spotifyr library function `get_category_playlists` to scrape a list 
+of playlists for the given genre input. This returns a dataframe of 
+spotify-created playlists for the given genre. We randomly sample a playlist 
+from this dataframe and obtain the playlists's ID, which we can then use to 
+embed the given playlist into our webpage. Within the app.R script, we embed 
+the playlist into our Shiny app in the Server Function portion of our app by 
+building the url "https://open.spotify.com/embed/playlist/[playlistID]" and 
+using the HTML() function to embed it on our page. We are also able to add 
+album art to our page. Each spotify playlist has an associated "cover" image, 
+which we pull using the `get_playlist_cover_image` function. This provides a 
+url which we can embed onto our page.
+
+The Playlist by Park tab works in a similar way. This tab allows the user to 
+choose from a list of National Parks and will display a playlist based on that 
+input. The methods are the same as those described for the Playlist by Genre 
+tab. However, the playlists sourced are created by Spotify artist Parks 
+Project. We note that not all National Parks have a playlist available.
 
 
 ### Camping Packing List
