@@ -715,8 +715,7 @@ server <- function(input, output, session) {
       shinyalert(title = "ERROR",
                  text  = "We could not locate your starting point. Please try another address/location.",
                  type  = "error")
-    }
-    if (route == "Exceeded distance limit") {
+    } else if (route == "Exceeded distance limit") {
       route <- NULL
       shinyalert(title = "ERROR",
                  text  = "This app only supports route distances up to 3000 miles. Please select another park closer to your starting location.",
