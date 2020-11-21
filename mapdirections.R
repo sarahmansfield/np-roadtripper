@@ -6,6 +6,11 @@ get_route <- function(startpoint, park) {
   input_long <- x$bbox[1]
   input_lat <- x$bbox[2]
   
+  # error check for invalid coordinates
+  if (is.null(input_long)) {
+    return("Invalid starting point")
+  }
+  
   parkinfo <- readRDS("data/parkfeatures.rds")
   park_long <- parkinfo %>%
     filter(parkname == park) %>%
@@ -16,10 +21,10 @@ get_route <- function(startpoint, park) {
     select(latitude) %>%
     pull()
   
-  # exit function and return null if distance between startpoint and park is over 3000 mile limit
+  # exit function if distance between startpoint and park is over 3000 mile limit
   dist <- distHaversine(cbind(input_long, input_lat), cbind(park_long, park_lat))/1609
   if (dist > 3000) {
-    return(NULL)
+    return("Exceeded distance limit")
   }
   
   coordinates <- list(c(input_long, input_lat), c(park_long, park_lat))

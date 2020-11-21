@@ -6,6 +6,11 @@ calcDistance <- function(address) {
   input_long <- x$bbox[1]
   input_lat <- x$bbox[2]
   
+  # error check for invalid coordinates
+  if (is.null(input_long)) {
+    return("Invalid starting point")
+  }
+  
   parkfinal <- readRDS("data/parkfeatures.rds")
   parkfinal <- parkfinal %>% 
     rowwise() %>%
@@ -24,9 +29,9 @@ get_parkrec <- function(parkdata, maxdistance, activities, fee, season) {
     filter(distance <= maxdistance) %>%
     select(-c(longitude, latitude, distance))
   
-  # exit function and return null if no parks are within the specified distance
+  # exit function if no parks are within the specified distance
   if (nrow(parkdata) == 0) {
-    return(NULL)
+    return("No parks within specified distance")
   }
   
   parkdata$parkname <- factor(parkdata$parkname)

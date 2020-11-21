@@ -493,13 +493,20 @@ server <- function(input, output, session) {
       }
     })
     
-    parkfinal <- calcDistance(input$startloc)
-    rec <- get_parkrec(parkdata = parkfinal, maxdistance = input$distance, activities = input$activities,
-                       fee = as.numeric(input$fee), season = input$season)
-    if (is.null(rec)) {
+    parkfinal <- calcDistance(input$startloc); rec <- NULL
+    if (parkfinal == "Invalid starting point") {
       shinyalert(title = "ERROR",
-                 text  = "There are no national parks within the specified distance from your starting point. Please expand your search.",
+                 text  = "We could not locate your starting point. Please try another address/location.",
                  type  = "error")
+    } else {
+      rec <- get_parkrec(parkdata = parkfinal, maxdistance = input$distance, activities = input$activities,
+                         fee = as.numeric(input$fee), season = input$season)
+      if (rec == "No parks within specified distance") {
+        rec <- NULL
+        shinyalert(title = "ERROR",
+                   text  = "There are no national parks within the specified distance from your starting point. Please expand your search.",
+                   type  = "error")
+        }
     }
     rec
   })
@@ -703,7 +710,14 @@ server <- function(input, output, session) {
     })
     
     route <- get_route(startpoint = input$startlocmap, park = input$parkdest)
-    if (is.null(route)) {
+    if (route == "Invalid starting point") {
+      route <- NULL
+      shinyalert(title = "ERROR",
+                 text  = "We could not locate your starting point. Please try another address/location.",
+                 type  = "error")
+    }
+    if (route == "Exceeded distance limit") {
+      route <- NULL
       shinyalert(title = "ERROR",
                  text  = "This app only supports route distances up to 3000 miles. Please select another park closer to your starting location.",
                  type  = "error")
