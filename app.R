@@ -1,4 +1,4 @@
-#devtools::install_github('charlie86/spotifyr')
+devtools::install_github('charlie86/spotifyr')
 library(shinydashboard)
 library(dashboardthemes)
 library(shinyBS)
@@ -16,7 +16,7 @@ library(lubridate)
 library(knitr)
 library(httr)
 library(remotes)
-#remotes::install_github("GIScience/openrouteservice-r")
+remotes::install_github("GIScience/openrouteservice-r")
 library(openrouteservice)
 ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key for openroute service api
 
@@ -69,11 +69,6 @@ ui <- fluidPage(
         tags$img(src="https://www.travelyosemite.com/media/820617/adobestock_196063806_1000x500.jpg", width = "34%", align = "left"),
         tags$img(src="https://media.deseretdigital.com/file/fdd8867843?type=jpeg&quality=55&c=15&a=4379240d", width = '34%', align = "center"),
         tags$img(src="https://www.yellowstonepark.com/.image/t_share/MTUxMzk3NjQ1MjMzOTU2MDk1/teton-bison_andrecostantini_700.jpg", width = '32%', align = "right")
-        #   column(12, class="title-box", 
-        #          tags$h1(class="primary-title", style='margin-top:10px;', 'National Park Roadtripper!')
-        
-        #  https://www.usnews.com/dims4/USNEWS/c780ac6/2147483647/resize/1200x%3E/quality/85/?url=http%3A%2F%2Fmedia.beam.usnews.com%2F02%2F5a%2F9f703dee4990843b40902de4c617%2Fyosemite2-getty-loic-lagarde.jpg
-        
       )),
     dashboardSidebar(
       sidebarMenu(id = "sidebar",
@@ -809,23 +804,14 @@ server <- function(input, output, session) {
   
 # TAB 3.1 - PLAYLIST PARK
 
-  # # create picture of album art
-  # picture <- eventReactive(input$parkdest_playlist, {
-  #   get_playlist_cover_image(
-  #     input$parkdest_playlist) %>%
-  #     select(url) %>%
-  #     mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
-  # )
-  # 
-  # output$picture<-renderText(picture()$Image)
-  
+  # create picture of album art
   picture <- eventReactive(input$parkdest_playlist, {
     get_cover_art(input$parkdest_playlist) %>%
       select(url) %>%
       mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
   )
   
-  output$picture <-renderText(picture()$Image)
+  output$picture <- renderText(picture()$Image)
   
   # output playlist for specified park 
   output$play <- renderUI({
@@ -844,18 +830,6 @@ server <- function(input, output, session) {
       select(id) %>%
       unlist()
   })
-  
-  
-  # # create picture of album art
-  # picture_genre <- reactive({
-  #   get_playlist_cover_image(
-  #     playlist_id_genre()) %>%
-  #     select(url) %>%
-  #     mutate(Image = str_c("<img src='", url, "' height = '300'></img"))
-  # })
-  # 
-  # output$picture_genre <- renderText(picture_genre()$Image)
-  
   
  # create picture of album art
   picture_genre <- reactive({
@@ -914,13 +888,7 @@ server <- function(input, output, session) {
   
   output$packlist <- DT::renderDataTable({
     DT::datatable(pack_data(),
-                  escape = F, rownames = F
-                  # caption = htmltools::tags$caption(
-                  #   style = "caption-side: top; text-align: center; 
-                  #   color:black; font-size:150% ;",
-                  #   "Your Packing List!"
-                  # )
-    )
+                  escape = F, rownames = F)
   })
   
 }
