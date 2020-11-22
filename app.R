@@ -23,8 +23,6 @@ ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key
 Sys.setenv(SPOTIFY_CLIENT_ID = '424f8cebaa33461eb2e2ee3f821291a4')
 Sys.setenv(SPOTIFY_CLIENT_SECRET = 'eea82f38c4d44094b8e0c328c9a11885')
 
-access_token <- get_spotify_access_token()
-
 # load api helper functions
 source("parkinfo.R")
 source("mapdirections.R")
@@ -469,6 +467,14 @@ ui <- fluidPage(
 # server function
 server <- function(input, output, session) {
   
+  spotify_access_token <- reactive({
+    get_spotify_access_token()
+  })
+  
+  spotify_authorization_token <- reactive({
+    get_spotify_authorization_code()
+  })
+  
 # TAB 0 - USER GUIDE
   
   # sidebar title
@@ -814,7 +820,7 @@ server <- function(input, output, session) {
   # create picture of album art
   picture <- eventReactive(input$parkdest_playlist, {
     get_playlist_cover_image(
-      input$parkdest_playlist) %>%
+      input$parkdest_playlist, authorization = spotify_authorization_token()) %>%
       select(url) %>%
       mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
   )
@@ -832,7 +838,7 @@ server <- function(input, output, session) {
   
   # Get playlist_genre ID
   playlist_id_genre <- eventReactive(input$genre, {
-    get_category_playlists(category_id = input$genre, limit = 50) %>%
+    get_category_playlists(category_id = input$genre, limit = 50, authorization = spotify_access_token()) %>%
       sample_n(1) %>%
       select(id) %>%
       unlist()
@@ -842,7 +848,7 @@ server <- function(input, output, session) {
   # create picture of album art
   picture_genre <- reactive({
     get_playlist_cover_image(
-      playlist_id_genre()) %>%
+      playlist_id_genre(), authorization = spotify_authorization_token()) %>%
       select(url) %>%
       mutate(Image = str_c("<img src='", url, "' height = '300'></img"))
   })
