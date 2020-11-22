@@ -17,37 +17,32 @@ library(purrr)
 library(httr)
 library(assertthat)
 
-# client_id <- '424f8cebaa33461eb2e2ee3f821291a4'
-# client_secret <- 'eea82f38c4d44094b8e0c328c9a11885'
-# token <- POST('https://accounts.spotify.com/api/token',
-#               accept_json(), 
-#               authenticate(client_id, client_secret),
-#               body = list(grant_type = 'client_credentials'),
-#               encode = 'form', 
-#               httr::config(http_version = 2)) %>% content %>% .$access_token 
+ client_id <- '424f8cebaa33461eb2e2ee3f821291a4'
+ client_secret <- 'eea82f38c4d44094b8e0c328c9a11885'
+ token <- POST('https://accounts.spotify.com/api/token',
+               accept_json(), 
+               authenticate(client_id, client_secret),
+               body = list(grant_type = 'client_credentials'),
+               encode = 'form', 
+               httr::config(http_version = 2)) %>% content %>% .$access_token 
 
-Sys.setenv(SPOTIFY_CLIENT_ID = '424f8cebaa33461eb2e2ee3f821291a4')
-Sys.setenv(SPOTIFY_CLIENT_SECRET = 'eea82f38c4d44094b8e0c328c9a11885')
 
-token <- get_spotify_access_token()
 
-# get_token <- function(){
-#   clientID <- "424f8cebaa33461eb2e2ee3f821291a4"
-#   secret <- "eea82f38c4d44094b8e0c328c9a11885"
-#   
-#   response = POST(
-#     'https://accounts.spotify.com/api/token',
-#     accept_json(),
-#     authenticate(clientID, secret),
-#     body = list(grant_type = 'client_credentials'),
-#     encode = 'form'
-#   )
-#   
-#   token = content(response)$access_token
-#   token
-# }
-# 
-# authorization.header = paste0("Bearer ", get_token())
+get_cover_art <- function(playlistID) {
+  
+  url = str_c("https://api.spotify.com/v1/playlists/", playlistID, "/images")
+  
+
+  p <- GET(url, query = list(access_token = token))
+  res <- RETRY('GET', url, query = list(access_token = token), encode = 'json')
+  stop_for_status(res)
+  res <- fromJSON(content(res, as = 'text', encoding = 'UTF-8'), flatten = TRUE)
+  return(res)
+
+}
+
+
+
 
 get_parks_project_songs <- function(playlistID) {
   
@@ -74,8 +69,7 @@ get_parks_project_songs <- function(playlistID) {
     select(name, uri, popularity, artist_name, track_number, id, href, album_name, duration_ms)
 }
 
-p <- get_parks_project_songs("117MQyf7iOjLaUVN7zcJw6")
 
 
-p1 <- get_playlist_cover_image("117MQyf7iOjLaUVN7zcJw6")
+
 

@@ -31,7 +31,7 @@ access_token <- POST('https://accounts.spotify.com/api/token',
 # load api helper functions
 source("parkinfo.R")
 source("mapdirections.R")
-#source("playlist_parks.R")
+source("playlist_parks.R")
 
 
 # user interface
@@ -818,6 +818,14 @@ server <- function(input, output, session) {
   # 
   # output$picture<-renderText(picture()$Image)
   
+  picture <- eventReactive(input$parkdest_playlist, {
+    get_cover_art(input$parkdest_playlist) %>%
+      select(url) %>%
+      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
+  )
+  
+  output$picture <-renderText(picture()$Image)
+  
   # output playlist for specified park 
   output$play <- renderUI({
     url <- str_c("https://open.spotify.com/embed/playlist/", input$parkdest_playlist)
@@ -846,6 +854,18 @@ server <- function(input, output, session) {
   # })
   # 
   # output$picture_genre <- renderText(picture_genre()$Image)
+  
+  
+ # create picture of album art
+  picture_genre <- reactive({
+     get_cover_art(
+       playlist_id_genre()) %>%
+       select(url) %>%
+       mutate(Image = str_c("<img src='", url, "' height = '300'></img"))
+   })
+   
+   output$picture_genre <- renderText(picture_genre()$Image)
+  
   
   # output playlist for specified genre
   output$playlist_genre <- renderUI({
