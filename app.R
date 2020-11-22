@@ -20,8 +20,13 @@ library(remotes)
 library(openrouteservice)
 ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key for openroute service api
 
-Sys.setenv(SPOTIFY_CLIENT_ID = '424f8cebaa33461eb2e2ee3f821291a4')
-Sys.setenv(SPOTIFY_CLIENT_SECRET = 'eea82f38c4d44094b8e0c328c9a11885')
+# spotify info
+client_id <- '424f8cebaa33461eb2e2ee3f821291a4'
+client_secret <- 'eea82f38c4d44094b8e0c328c9a11885'
+access_token <- POST('https://accounts.spotify.com/api/token',
+              accept_json(), authenticate(client_id, client_secret),
+              body = list(grant_type='client_credentials'),
+              encode = 'form', httr::config(http_version = 2)) %>% content %>% .$access_token 
 
 # load api helper functions
 source("parkinfo.R")
@@ -467,14 +472,6 @@ ui <- fluidPage(
 # server function
 server <- function(input, output, session) {
   
-  spotify_access_token <- reactive({
-    get_spotify_access_token()
-  })
-  
-  spotify_authorization_token <- reactive({
-    get_spotify_authorization_code()
-  })
-  
 # TAB 0 - USER GUIDE
   
   # sidebar title
@@ -811,15 +808,15 @@ server <- function(input, output, session) {
   
 # TAB 3.1 - PLAYLIST PARK
 
-  # create picture of album art
-  picture <- eventReactive(input$parkdest_playlist, {
-    get_playlist_cover_image(
-      input$parkdest_playlist, authorization = spotify_authorization_token()) %>%
-      select(url) %>%
-      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
-  )
-  
-  output$picture<-renderText(picture()$Image)
+  # # create picture of album art
+  # picture <- eventReactive(input$parkdest_playlist, {
+  #   get_playlist_cover_image(
+  #     input$parkdest_playlist) %>%
+  #     select(url) %>%
+  #     mutate(Image = str_c("<img src='", url, "' height = '300'></img"))}
+  # )
+  # 
+  # output$picture<-renderText(picture()$Image)
   
   # output playlist for specified park 
   output$play <- renderUI({
@@ -832,22 +829,23 @@ server <- function(input, output, session) {
   
   # Get playlist_genre ID
   playlist_id_genre <- eventReactive(input$genre, {
-    get_category_playlists(category_id = input$genre, limit = 50, authorization = spotify_access_token()) %>%
+    get_category_playlists(category_id = input$genre, limit = 50,
+                           authorization = access_token) %>%
       sample_n(1) %>%
       select(id) %>%
       unlist()
   })
   
   
-  # create picture of album art
-  picture_genre <- reactive({
-    get_playlist_cover_image(
-      playlist_id_genre(), authorization = spotify_authorization_token()) %>%
-      select(url) %>%
-      mutate(Image = str_c("<img src='", url, "' height = '300'></img"))
-  })
-  
-  output$picture_genre <- renderText(picture_genre()$Image)
+  # # create picture of album art
+  # picture_genre <- reactive({
+  #   get_playlist_cover_image(
+  #     playlist_id_genre()) %>%
+  #     select(url) %>%
+  #     mutate(Image = str_c("<img src='", url, "' height = '300'></img"))
+  # })
+  # 
+  # output$picture_genre <- renderText(picture_genre()$Image)
   
   # output playlist for specified genre
   output$playlist_genre <- renderUI({
