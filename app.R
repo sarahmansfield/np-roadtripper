@@ -169,7 +169,7 @@ ui <- fluidPage(
                          tags$img(src = "treefinal.png", width = "50%", align = "right", opacity = "0.4")
                   ),
                   column(8, align = "center",
-                         div(h2(("Welcome to the National Park Roadtrip Planner!")), style = "color:#1f78b4 ; border-bottom:3px solid #1f78b4")), 
+                         div(h2(("Welcome to the National Park Roadtripper!")), style = "color:#1f78b4 ; border-bottom:3px solid #1f78b4")), 
                   column(2, align = "right", 
                          tags$img(src = "treefinal.png", width = "50%", align = "left"))),
                 fluidRow(
@@ -180,13 +180,7 @@ ui <- fluidPage(
                          road trip to one of America's beautiful national parks!
                          Planning road trips can be time consuming, but we help make it easier -
                             Welcome to the National Park Roadtripper app! "),
-                         tags$div(
-                           "Created using the ",
-                           tags$a(href="https://www.nps.gov/subjects/developer/index.htm", "NPS API,"),
-                           tags$a(href="https://openrouteservice.org/", "Openroute Service API,"),
-                           "and the ",
-                           tags$a(href="https://developer.spotify.com/documentation/web-api/", "Spotify Web API")
-                         ),
+                         "Created by Aasha Reddy, Mady Beckner, Emre Yurtbay, and Sarah Mansfield",
                          hr(),
                          h3(strong("How to use the app:")),
                          br()
@@ -251,6 +245,13 @@ ui <- fluidPage(
                        one with nature."))
                              )
                          )
+                ),
+                tags$div(
+                  "Created using the ",
+                  tags$a(href="https://www.nps.gov/subjects/developer/index.htm", "National Park Service API,"),
+                  tags$a(href="https://openrouteservice.org/", "Openroute Service API,"),
+                  "and the ",
+                  tags$a(href="https://developer.spotify.com/documentation/web-api/", "Spotify Web API")
                 )),
         
         # find a park tab
