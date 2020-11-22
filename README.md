@@ -12,6 +12,8 @@ their drive, either by park or by genre. Finally, our app is able to recommend
 a packing list for the user based on certain inputs, such as time of year and 
 trip duration. 
 
+[Link to the App](https://sbmansfield.shinyapps.io/nproadtripper/)
+
 ## Requirements
 
 1. Your project must be reproducible.
