@@ -17,31 +17,45 @@ library(purrr)
 library(httr)
 library(assertthat)
 
+# client_id <- '424f8cebaa33461eb2e2ee3f821291a4'
+# client_secret <- 'eea82f38c4d44094b8e0c328c9a11885'
+# token <- POST('https://accounts.spotify.com/api/token',
+#               accept_json(), 
+#               authenticate(client_id, client_secret),
+#               body = list(grant_type = 'client_credentials'),
+#               encode = 'form', 
+#               httr::config(http_version = 2)) %>% content %>% .$access_token 
 
-get_token <- function(){
-  clientID <- "424f8cebaa33461eb2e2ee3f821291a4"
-  secret <- "eea82f38c4d44094b8e0c328c9a11885"
-  
-  response = POST(
-    'https://accounts.spotify.com/api/token',
-    accept_json(),
-    authenticate(clientID, secret),
-    body = list(grant_type = 'client_credentials'),
-    encode = 'form'
-  )
-  
-  token = content(response)$access_token
-  authorization.header = paste0("Bearer ", token)
-}
+Sys.setenv(SPOTIFY_CLIENT_ID = '424f8cebaa33461eb2e2ee3f821291a4')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = 'eea82f38c4d44094b8e0c328c9a11885')
 
-authorization.header = get_token()
+token <- get_spotify_access_token()
+
+# get_token <- function(){
+#   clientID <- "424f8cebaa33461eb2e2ee3f821291a4"
+#   secret <- "eea82f38c4d44094b8e0c328c9a11885"
+#   
+#   response = POST(
+#     'https://accounts.spotify.com/api/token',
+#     accept_json(),
+#     authenticate(clientID, secret),
+#     body = list(grant_type = 'client_credentials'),
+#     encode = 'form'
+#   )
+#   
+#   token = content(response)$access_token
+#   token
+# }
+# 
+# authorization.header = paste0("Bearer ", get_token())
 
 get_parks_project_songs <- function(playlistID) {
   
   url = str_c("https://api.spotify.com/v1/playlists/", playlistID, "/tracks")
   
-  p <- content(GET(url = sprintf(url),
-              config = add_headers(authorization = authorization.header)))
+  # p <- content(GET(url = sprintf(url),
+  #             config = add_headers(authorization = authorization.header)))
+  p <- GET(url, query = list(access_token = token)) %>% content
   
   toJSON(p$items) -> df1
   fromJSON(df1) %>% as.data.frame -> df2

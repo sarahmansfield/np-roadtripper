@@ -1,4 +1,4 @@
-devtools::install_github('charlie86/spotifyr')
+#devtools::install_github('charlie86/spotifyr')
 library(shinydashboard)
 library(dashboardthemes)
 library(shinyBS)
@@ -20,10 +20,15 @@ library(remotes)
 library(openrouteservice)
 ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key for openroute service api
 
+Sys.setenv(SPOTIFY_CLIENT_ID = '424f8cebaa33461eb2e2ee3f821291a4')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = 'eea82f38c4d44094b8e0c328c9a11885')
+
+access_token <- get_spotify_access_token()
+
 # load api helper functions
 source("parkinfo.R")
 source("mapdirections.R")
-source("playlist_parks.R")
+#source("playlist_parks.R")
 
 
 # user interface
