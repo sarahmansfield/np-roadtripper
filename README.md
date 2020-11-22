@@ -1,4 +1,4 @@
-# National Park Roadtrip Planner
+# National Park Roadtripper
 
 ## About the App
 
