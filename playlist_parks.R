@@ -33,7 +33,7 @@ get_cover_art <- function(playlistID) {
   url = str_c("https://api.spotify.com/v1/playlists/", playlistID, "/images")
   
 
-  p <- GET(url, query = list(access_token = token))
+  #p <- GET(url, query = list(access_token = token))
   res <- RETRY('GET', url, query = list(access_token = token), encode = 'json')
   stop_for_status(res)
   res <- fromJSON(content(res, as = 'text', encoding = 'UTF-8'), flatten = TRUE)
