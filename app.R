@@ -804,12 +804,6 @@ server <- function(input, output, session) {
   })
   
 # TAB 3.1 - PLAYLIST PARK
- 
-  # DELETE? - Mady working
-  data <- eventReactive(input$parkdest_playlist, {
-    get_parks_project_songs(
-      playlistID = input$parkdest_playlist) }
-  )
 
   # create picture of album art
   picture <- eventReactive(input$parkdest_playlist, {
