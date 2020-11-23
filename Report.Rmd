@@ -156,10 +156,10 @@ how important each item is for the trip.
 
 ## References
 
-[1](https://www.nps.gov/subjects/digital/nps-data-api.htm),
-[2](https://openrouteservice.org/dev/#/api-docs),
-[3](https://giscience.github.io/openrouteservice-r/articles/openrouteservice.html),
-[4](http://shinyapps.dreamrs.fr/shinyWidgets/),
-[5](https://rstudio.github.io/leaflet/)
-[6](https://developer.spotify.com/documentation/widgets/generate/embed/)
-[7](https://github.com/charlie86/spotifyr)
+[NPS API Data](https://www.nps.gov/subjects/digital/nps-data-api.htm)\
+[Open Route Service API documentation](https://openrouteservice.org/dev/#/api-docs)\
+[Open Route Service API Query information](https://giscience.github.io/openrouteservice-r/articles/openrouteservice.html)\
+[shinyWidgets Overview](http://shinyapps.dreamrs.fr/shinyWidgets/)\
+[Leaflet for R documentation](https://rstudio.github.io/leaflet/)\
+[Spotify API documentation](https://developer.spotify.com/documentation/widgets/generate/embed/)\
+[Spotifyr library documentation](https://github.com/charlie86/spotifyr)
