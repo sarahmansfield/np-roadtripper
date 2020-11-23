@@ -117,8 +117,9 @@ the playlist into our Shiny app in the Server Function portion of our app by
 building the url "https://open.spotify.com/embed/playlist/[playlistID]" and 
 using the HTML() function to embed it on our page. We are also able to add 
 album art to our page. Each spotify playlist has an associated "cover" image, 
-which we pull using the `get_playlist_cover_image` function. This provides a 
-url which we can embed onto our page.
+which we pull using the `get_cover_art` function as coded in the 
+`playlist_parks.R` script. This provides a url which we can embed onto our 
+page.
 
 The Playlist by Park tab works in a similar way. This tab allows the user to 
 choose from a list of National Parks and will display a playlist based on that 
@@ -155,9 +156,9 @@ how important each item is for the trip.
 
 ## References
 
-[National Park API](https://www.nps.gov/subjects/digital/nps-data-api.htm),
-[Openroute Service API](https://openrouteservice.org/dev/#/api-docs),
-[Guide to using the ORS API in R](https://giscience.github.io/openrouteservice-r/articles/openrouteservice.html),
-[Custom Shiny Widgets](http://shinyapps.dreamrs.fr/shinyWidgets/),
-[Guide to using Leaflet in R](https://rstudio.github.io/leaflet/)
-[Embedding a Spotify playlist](https://developer.spotify.com/documentation/widgets/generate/embed/)
+[1](https://www.nps.gov/subjects/digital/nps-data-api.htm),
+[2](https://openrouteservice.org/dev/#/api-docs),
+[3](https://giscience.github.io/openrouteservice-r/articles/openrouteservice.html),
+[4](http://shinyapps.dreamrs.fr/shinyWidgets/),
+[5](https://rstudio.github.io/leaflet/)
+[6](https://developer.spotify.com/documentation/widgets/generate/embed/)
