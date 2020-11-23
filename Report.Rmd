@@ -162,3 +162,4 @@ how important each item is for the trip.
 [4](http://shinyapps.dreamrs.fr/shinyWidgets/),
 [5](https://rstudio.github.io/leaflet/)
 [6](https://developer.spotify.com/documentation/widgets/generate/embed/)
+[7](https://github.com/charlie86/spotifyr)
