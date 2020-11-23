@@ -114,7 +114,7 @@ spotify-created playlists for the given genre. We randomly sample a playlist
 from this dataframe and obtain the playlists's ID, which we can then use to 
 embed the given playlist into our webpage. Within the app.R script, we embed 
 the playlist into our Shiny app in the Server Function portion of our app by 
-building the url "https://open.spotify.com/embed/playlist/[playlistID]" and 
+building the url https://open.spotify.com/embed/playlist/[playlistID] and 
 using the HTML() function to embed it on our page. We are also able to add 
 album art to our page. Each spotify playlist has an associated "cover" image, 
 which we pull using the `get_cover_art` function as coded in the 
