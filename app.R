@@ -533,25 +533,25 @@ server <- function(input, output, session) {
   output$image1 <- renderText({
     if (!is.null(recData())) {
       imageurl <- recData()$images[[1]]$url[1]
-      str_c("<img src='", imageurl, "' width = '400'></img")
+      str_c("<img src='", imageurl, "' width = '300'></img")
     }
   })
   output$image2 <- renderText({
     if (!is.null(recData())) {
       imageurl <- recData()$images[[1]]$url[1]
-      str_c("<img src='", imageurl, "' width = '400'></img")
+      str_c("<img src='", imageurl, "' width = '300'></img")
     }
   })
   output$image3 <- renderText({
     if (!is.null(recData())) {
       imageurl <- recData()$images[[1]]$url[1]
-      str_c("<img src='", imageurl, "' width = '400'></img")
+      str_c("<img src='", imageurl, "' width = '300'></img")
     }
   })
   output$image4 <- renderText({
     if (!is.null(recData())) {
       imageurl <- recData()$images[[1]]$url[1]
-      str_c("<img src='", imageurl, "' width = '400'></img")
+      str_c("<img src='", imageurl, "' width = '300'></img")
     }
   })
   # table of activities
