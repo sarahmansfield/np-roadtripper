@@ -162,4 +162,5 @@ how important each item is for the trip.
 [shinyWidgets Overview](http://shinyapps.dreamrs.fr/shinyWidgets/)\
 [Leaflet for R documentation](https://rstudio.github.io/leaflet/)\
 [Spotify API documentation](https://developer.spotify.com/documentation/widgets/generate/embed/)\
-[Spotifyr library documentation](https://github.com/charlie86/spotifyr)
+[Spotifyr library documentation](https://github.com/charlie86/spotifyr)\
+[Shiny loading bars](https://shiny.rstudio.com/articles/progress.html)
