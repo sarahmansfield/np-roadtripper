@@ -1,4 +1,4 @@
-devtools::install_github('charlie86/spotifyr')
+#devtools::install_github('charlie86/spotifyr')
 library(shinydashboard)
 library(dashboardthemes)
 library(shinyBS)
@@ -16,7 +16,7 @@ library(lubridate)
 library(knitr)
 library(httr)
 library(remotes)
-remotes::install_github("GIScience/openrouteservice-r")
+#remotes::install_github("GIScience/openrouteservice-r")
 library(openrouteservice)
 ors_api_key("5b3ce3597851110001cf6248ddae92a05a2c44bc9da60dcbccdfcbaa") #api key for openroute service api
 
@@ -68,7 +68,7 @@ ui <- fluidPage(
       title = shiny::span(
         tags$img(src="https://www.travelyosemite.com/media/820617/adobestock_196063806_1000x500.jpg", width = "34%", align = "left"),
         tags$img(src="https://media.deseretdigital.com/file/fdd8867843?type=jpeg&quality=55&c=15&a=4379240d", width = '34%', align = "center"),
-        tags$img(src="https://www.yellowstonepark.com/.image/t_share/MTUxMzk3NjQ1MjMzOTU2MDk1/teton-bison_andrecostantini_700.jpg", width = '32%', align = "right")
+        tags$img(src="https://www.fodors.com/wp-content/uploads/2020/11/gert-boers-qQC8tyG_JVA-1920-unsplash-800-crop.jpg", width = '32%', align = "right")
       )),
     dashboardSidebar(
       sidebarMenu(id = "sidebar",
